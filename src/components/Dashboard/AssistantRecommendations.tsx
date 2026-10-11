@@ -43,70 +43,70 @@ export const AssistantRecommendations: React.FC<AssistantRecommendationsProps> =
     : 0;
 
   return (
-    <div className="bg-gradient-to-br from-slate-900 via-slate-900/90 to-slate-800/80 border border-slate-800 rounded-3xl p-5 sm:p-6 shadow-2xl relative overflow-hidden space-y-4">
-      {/* Encabezado con estado del Asistente */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-800/80 pb-3">
+    <div className="bg-[#191919] border border-[#262626] rounded-2xl p-5 sm:p-6 shadow-fey-card relative overflow-hidden space-y-4 fey-halo-hover">
+      {/* Encabezado Fey con estado del Asistente */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#262626] pb-3">
         <div className="flex items-center gap-2.5">
-          <div className="p-2 rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 shadow-inner">
-            <Sparkles className="w-5 h-5" />
+          <div className="p-2 rounded-full bg-[#131313] border border-[#2a2a2a] text-fey-ember shadow-fey-button">
+            <Sparkles className="w-4 h-4" />
           </div>
           <div>
-            <h3 className="font-extrabold text-base text-white">
-              Recomendaciones del Asistente Financiero
+            <h3 className="font-bold text-base tracking-fey-heading text-white">
+              Recomendaciones del Asistente
             </h3>
-            <p className="text-xs text-slate-400">
-              Análisis dinámico de liquidez y compromisos para hoy
+            <p className="text-xs text-fey-graphite">
+              Análisis predictivo de liquidez y pasivos para hoy
             </p>
           </div>
         </div>
 
         <div className="flex items-center gap-2">
-          <span className="text-[11px] font-mono text-slate-400 bg-slate-950 px-2 py-0.5 rounded-lg border border-slate-800">
+          <span className="text-[11px] font-mono text-fey-mist bg-[#0b0b0b] px-2.5 py-1 rounded-full border border-[#222222]">
             Saldo Real: {formatPesos(totalRealBalance)}
           </span>
-          <span className="self-start sm:self-auto text-[11px] font-semibold text-emerald-400 bg-emerald-500/10 px-2.5 py-1 rounded-full border border-emerald-500/20">
-            ● Asistente Activo
+          <span className="text-[11px] font-bold text-fey-growth bg-fey-growth/10 px-2.5 py-1 rounded-full border border-fey-growth/30 shadow-fey-growth-glow">
+            ● Activo
           </span>
         </div>
       </div>
 
-      {/* Alerta de Urgencias si existen deudas próximas o vencidas */}
+      {/* Alerta de Urgencias si existen deudas críticas */}
       {urgentItems.length > 0 ? (
-        <div className="p-4 bg-red-500/10 border border-red-500/25 rounded-2xl space-y-2">
-          <div className="flex items-center gap-2 text-red-400 font-bold text-xs uppercase tracking-wide">
+        <div className="p-4 bg-[#131313] border border-fey-ember/30 rounded-xl space-y-2.5 shadow-fey-ember-glow">
+          <div className="flex items-center gap-2 text-fey-ember font-bold text-xs uppercase tracking-wider">
             <AlertCircle className="w-4 h-4" />
-            Acción Inmediata Requerida ({urgentItems.length} obligaciones críticas)
+            Atención Inmediata ({urgentItems.length} obligaciones críticas detectadas)
           </div>
 
-          <div className="space-y-1.5">
+          <div className="space-y-2">
             {urgentItems.slice(0, 2).map((item) => (
               <div key={item.id} className="flex items-start justify-between text-xs">
-                <span className="text-slate-200 font-semibold">{item.name}</span>
+                <span className="text-white font-medium">{item.name}</span>
                 <div className="text-right">
-                  <span className="text-red-400 font-mono font-bold block">
+                  <span className="text-fey-ember font-mono font-bold block">
                     {formatPesos(item.amountRequired)}
                   </span>
-                  <span className="text-[10px] text-slate-400">{item.explanation}</span>
+                  <span className="text-[10px] text-fey-graphite">{item.explanation}</span>
                 </div>
               </div>
             ))}
           </div>
 
-          <p className="text-[11px] text-red-300/80 pt-1 border-t border-red-500/20">
+          <p className="text-[11px] text-fey-mist pt-1.5 border-t border-[#262626]">
             {freeBalance >= urgentItems[0].amountRequired
-              ? `Tenés saldo libre suficiente (${formatPesos(freeBalance)}) para apartar esta reserva ahora mismo.`
-              : `Tu saldo libre actual (${formatPesos(freeBalance)}) es inferior a estas obligaciones. Priorizá cualquier nuevo ingreso hacia estos pagos.`}
+              ? `Disponés de saldo libre (${formatPesos(freeBalance)}) para apartar esta reserva de forma segura.`
+              : `Tu saldo libre (${formatPesos(freeBalance)}) es inferior a estas obligaciones. Priorizá cualquier nuevo cobro diario.`}
           </p>
         </div>
       ) : (
-        <div className="p-4 bg-emerald-500/10 border border-emerald-500/20 rounded-2xl flex items-center gap-3">
-          <ShieldCheck className="w-6 h-6 text-emerald-400 flex-shrink-0" />
+        <div className="p-4 bg-[#131313] border border-[#262626] rounded-xl flex items-center gap-3">
+          <ShieldCheck className="w-5 h-5 text-fey-growth flex-shrink-0" />
           <div className="text-xs">
-            <span className="font-bold text-emerald-300 block">
-              ¡Sin urgencias inminentes registradas!
+            <span className="font-bold text-white block">
+              Sin compromisos críticos inmediatos.
             </span>
-            <span className="text-slate-300">
-              Todas las obligaciones críticas conocidas están cubiertas o reservadas.
+            <span className="text-fey-graphite">
+              Las obligaciones conocidas están al día o cubiertas por reservas previas.
             </span>
           </div>
         </div>
@@ -115,49 +115,49 @@ export const AssistantRecommendations: React.FC<AssistantRecommendationsProps> =
       {/* Grid de Métricas y Recomendaciones para Hoy */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
         {/* Recomendación de Gasto Libre Seguro */}
-        <div className="p-3.5 bg-slate-950/60 border border-slate-800 rounded-xl space-y-1">
-          <div className="flex items-center justify-between text-xs text-slate-400">
-            <span className="font-semibold flex items-center gap-1.5">
-              <TrendingUp className="w-3.5 h-3.5 text-blue-400" />
+        <div className="p-3.5 bg-[#131313] border border-[#262626] rounded-xl space-y-1">
+          <div className="flex items-center justify-between text-xs text-fey-graphite">
+            <span className="font-medium flex items-center gap-1.5 text-white">
+              <TrendingUp className="w-3.5 h-3.5 text-fey-signal" />
               Margen de Gasto Diario
             </span>
             <span className="font-mono text-white font-bold">
               {formatPesos(Math.max(0, Math.round(freeBalance / 7)))} / día
             </span>
           </div>
-          <p className="text-[11px] text-slate-400 leading-relaxed">
-            Sugerencia calculada dividiendo tu Saldo Libre ({formatPesos(freeBalance)}) entre los próximos 7 días para no desfinanciar la semana.
+          <p className="text-[11px] text-fey-graphite leading-relaxed">
+            Presupuesto diario seguro dividiendo tu Saldo Libre ({formatPesos(freeBalance)}) en los próximos 7 días.
           </p>
         </div>
 
         {/* Recomendación Fondo de Contingencia */}
-        <div className="p-3.5 bg-slate-950/60 border border-slate-800 rounded-xl space-y-1">
-          <div className="flex items-center justify-between text-xs text-slate-400">
-            <span className="font-semibold flex items-center gap-1.5">
-              <Clock className="w-3.5 h-3.5 text-amber-400" />
+        <div className="p-3.5 bg-[#131313] border border-[#262626] rounded-xl space-y-1">
+          <div className="flex items-center justify-between text-xs text-fey-graphite">
+            <span className="font-medium flex items-center gap-1.5 text-white">
+              <Clock className="w-3.5 h-3.5 text-fey-ember" />
               Fondo de Emergencia
             </span>
-            <span className="font-mono text-amber-400 font-bold">
-              {emergencyPct}% completado
+            <span className="font-mono text-fey-ember font-bold">
+              {emergencyPct}% acumulado
             </span>
           </div>
-          <p className="text-[11px] text-slate-400 leading-relaxed">
+          <p className="text-[11px] text-fey-graphite leading-relaxed">
             {emergencyPct < 50
-              ? 'Cobertura inicial baja. Es aconsejable reservar al menos un 15% de cada cobro diario variable.'
-              : 'Buen colchón de contingencia. Podés canalizar excedentes a metas secundarias.'}
+              ? 'Cobertura inicial baja. Es aconsejable reservar al menos 15% de cada cobro diario.'
+              : 'Buen colchón de contingencia acumulado para amortiguar imprevistos.'}
           </p>
         </div>
       </div>
 
-      {/* Llamada a la acción rápida */}
+      {/* Pie interactivo */}
       <div className="flex items-center justify-between pt-2 text-xs">
-        <span className="text-slate-400">¿Recibiste un cobro hoy?</span>
+        <span className="text-fey-graphite">¿Tuviste ingresos hoy?</span>
         <button
           onClick={onOpenIncomeModal}
-          className="inline-flex items-center gap-1.5 text-emerald-400 hover:text-emerald-300 font-bold hover:underline transition"
+          className="inline-flex items-center gap-1.5 text-white hover:text-fey-mist font-bold transition group"
         >
           <span>Registrar cobro variable</span>
-          <ArrowRight className="w-3.5 h-3.5" />
+          <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
         </button>
       </div>
     </div>

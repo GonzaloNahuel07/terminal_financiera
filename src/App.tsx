@@ -6,7 +6,8 @@ import {
   Wallet,
   LayoutDashboard,
   History,
-  Coins
+  Coins,
+  ShieldAlert
 } from 'lucide-react';
 import { db } from './db';
 import { initializeDefaultAccountsIfNeeded } from './services/accountService';
@@ -21,11 +22,12 @@ import { AccountList } from './components/Accounts/AccountList';
 import { TransactionList } from './components/Transactions/TransactionList';
 import { TransactionModal } from './components/Transactions/TransactionModal';
 import { DailyIncomeModal } from './components/Income/DailyIncomeModal';
+import { DebtsAndRecurringView } from './components/DebtsAndRecurringView';
 import type { Transaction } from './types';
 
 export const App: React.FC = () => {
   const [isOnline, setIsOnline] = useState<boolean>(navigator.onLine);
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'accounts' | 'transactions'>('dashboard');
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'accounts' | 'debts' | 'transactions'>('dashboard');
   const [isTxModalOpen, setIsTxModalOpen] = useState(false);
   const [isDailyIncomeModalOpen, setIsDailyIncomeModalOpen] = useState(false);
   const [txToEdit, setTxToEdit] = useState<Transaction | null>(null);
@@ -94,45 +96,50 @@ export const App: React.FC = () => {
   );
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans">
-      {/* Barra de Navegación Superior */}
-      <header className="border-b border-slate-800 bg-slate-900/80 backdrop-blur sticky top-0 z-40 px-4 py-3 sm:px-6">
-        <div className="max-w-5xl mx-auto flex items-center justify-between">
+    <div className="min-h-screen bg-[#0b0b0b] text-white flex flex-col font-sans selection:bg-white selection:text-black">
+      {/* Barra de Navegación Superior Estilo Fey */}
+      <header className="border-b border-[#1f1f1f] bg-[#0b0b0b]/90 backdrop-blur-md sticky top-0 z-40 px-4 py-3 sm:px-6">
+        <div className="max-w-6xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="p-2 bg-emerald-500/10 rounded-xl text-emerald-400 border border-emerald-500/20 shadow-md">
-              <Wallet className="w-5 h-5" />
+            <div className="p-2 rounded-xl bg-[#191919] border border-[#2a2a2a] text-white shadow-fey-button">
+              <Wallet className="w-4 h-4 text-fey-mist" />
             </div>
             <div>
-              <h1 className="text-base sm:text-lg font-black tracking-tight text-white leading-tight">
-                Asistente Financiero
-              </h1>
-              <p className="text-[11px] text-slate-400">PWA Inteligente • Pesos Argentinos (ARS)</p>
+              <div className="flex items-center gap-2">
+                <h1 className="text-sm sm:text-base font-bold tracking-fey-heading text-white leading-tight">
+                  Terminal Financiera
+                </h1>
+                <span className="hidden sm:inline-block text-[10px] uppercase font-bold tracking-widest text-fey-graphite px-2 py-0.5 rounded-full border border-[#222222]">
+                  ARS • Calibre
+                </span>
+              </div>
+              <p className="text-[11px] text-fey-graphite">Gestión de Liquidez y Compromisos</p>
             </div>
           </div>
 
-          {/* Acciones Rápidas y Conectividad */}
-          <div className="flex items-center gap-2">
+          {/* Acciones Rápidas Fey (99px Pills) */}
+          <div className="flex items-center gap-2.5">
             <button
               onClick={() => setIsDailyIncomeModalOpen(true)}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold text-xs transition shadow-md shadow-emerald-500/20"
+              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white text-black hover:bg-fey-pale font-bold text-xs transition shadow-fey-button active:scale-95"
             >
               <Coins className="w-3.5 h-3.5" />
               <span>+ Cobro Diario</span>
             </button>
 
             {pendingSyncCount > 0 && (
-              <span className="hidden sm:inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold bg-amber-500/10 text-amber-400 border border-amber-500/20">
+              <span className="hidden sm:inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-semibold bg-[#191919] text-fey-ember border border-[#262626]">
                 {pendingSyncCount} en cola
               </span>
             )}
 
             {isOnline ? (
-              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                <Wifi className="w-3.5 h-3.5" />
-                <span className="hidden sm:inline">En línea</span>
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium text-fey-graphite border border-[#222222]">
+                <Wifi className="w-3.5 h-3.5 text-fey-growth" />
+                <span className="hidden sm:inline text-white">Online</span>
               </span>
             ) : (
-              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-500/10 text-amber-400 border border-amber-500/20">
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium text-fey-ember bg-fey-ember/10 border border-fey-ember/30">
                 <WifiOff className="w-3.5 h-3.5" />
                 <span>Offline</span>
               </span>
@@ -142,7 +149,7 @@ export const App: React.FC = () => {
       </header>
 
       {/* Contenido Principal */}
-      <main className="flex-1 max-w-5xl w-full mx-auto p-4 sm:p-6 space-y-6">
+      <main className="flex-1 max-w-6xl w-full mx-auto p-4 sm:p-6 space-y-6">
         {/* Encabezado con Métricas Financieras */}
         <SummaryHeader
           totalRealBalance={totalRealBalance}
@@ -154,39 +161,50 @@ export const App: React.FC = () => {
           }}
         />
 
-        {/* Pestañas de Navegación Principal */}
-        <nav className="flex items-center gap-2 border-b border-slate-800 pb-2">
+        {/* Pestañas de Navegación Fey (Pills con acento Fey Signal) */}
+        <nav className="flex items-center gap-1.5 sm:gap-2 border-b border-[#1f1f1f] pb-2 overflow-x-auto">
           <button
             onClick={() => setActiveTab('dashboard')}
-            className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition ${
+            className={`inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition ${
               activeTab === 'dashboard'
-                ? 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/30'
-                : 'text-slate-400 hover:text-white hover:bg-slate-900'
+                ? 'bg-[#191919] text-white border-b-2 border-fey-signal shadow-fey-halo'
+                : 'text-fey-graphite hover:text-white'
             }`}
           >
-            <LayoutDashboard className="w-4 h-4" />
+            <LayoutDashboard className="w-3.5 h-3.5" />
             Dashboard
           </button>
           <button
             onClick={() => setActiveTab('accounts')}
-            className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition ${
+            className={`inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition ${
               activeTab === 'accounts'
-                ? 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/30'
-                : 'text-slate-400 hover:text-white hover:bg-slate-900'
+                ? 'bg-[#191919] text-white border-b-2 border-fey-signal shadow-fey-halo'
+                : 'text-fey-graphite hover:text-white'
             }`}
           >
-            <Wallet className="w-4 h-4" />
+            <Wallet className="w-3.5 h-3.5" />
             Cuentas ({accounts.length})
           </button>
           <button
-            onClick={() => setActiveTab('transactions')}
-            className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition ${
-              activeTab === 'transactions'
-                ? 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/30'
-                : 'text-slate-400 hover:text-white hover:bg-slate-900'
+            onClick={() => setActiveTab('debts')}
+            className={`inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition ${
+              activeTab === 'debts'
+                ? 'bg-[#191919] text-white border-b-2 border-fey-signal shadow-fey-halo'
+                : 'text-fey-graphite hover:text-white'
             }`}
           >
-            <History className="w-4 h-4" />
+            <ShieldAlert className="w-3.5 h-3.5 text-fey-ember" />
+            Deudas y Gastos Fijos ({debts.length + recurring.length})
+          </button>
+          <button
+            onClick={() => setActiveTab('transactions')}
+            className={`inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition ${
+              activeTab === 'transactions'
+                ? 'bg-[#191919] text-white border-b-2 border-fey-signal shadow-fey-halo'
+                : 'text-fey-graphite hover:text-white'
+            }`}
+          >
+            <History className="w-3.5 h-3.5" />
             Movimientos ({transactions.length})
           </button>
         </nav>
@@ -218,7 +236,19 @@ export const App: React.FC = () => {
           </section>
         )}
 
-        {/* Vista 3: Sección de Historial de Movimientos */}
+        {/* Vista 3: Deudas y Gastos Fijos (Módulo 5) */}
+        {activeTab === 'debts' && (
+          <section className="space-y-4">
+            <DebtsAndRecurringView
+              debts={debts}
+              recurring={recurring}
+              accounts={accounts}
+              reserves={reserves}
+            />
+          </section>
+        )}
+
+        {/* Vista 4: Historial de Movimientos */}
         {activeTab === 'transactions' && (
           <section className="space-y-4">
             <TransactionList
@@ -233,7 +263,7 @@ export const App: React.FC = () => {
         )}
       </main>
 
-      {/* Modal de Transacciones Estándar */}
+      {/* Modales */}
       <TransactionModal
         isOpen={isTxModalOpen}
         onClose={() => {
@@ -244,7 +274,6 @@ export const App: React.FC = () => {
         transactionToEdit={txToEdit}
       />
 
-      {/* Modal de Cobro Diario Variable con Asistente */}
       <DailyIncomeModal
         isOpen={isDailyIncomeModalOpen}
         onClose={() => setIsDailyIncomeModalOpen(false)}
@@ -252,8 +281,8 @@ export const App: React.FC = () => {
       />
 
       {/* Pie de Página */}
-      <footer className="border-t border-slate-800/80 py-4 px-4 text-center text-xs text-slate-500">
-        Asistente Financiero Personal PWA • Módulo 4: Ingresos Diarios y Dashboard Activo
+      <footer className="border-t border-[#1f1f1f] py-5 px-4 text-center text-xs text-fey-graphite">
+        Terminal Financiera Personal • Estética Nocturna Fey • Módulo 5 Activo
       </footer>
     </div>
   );
