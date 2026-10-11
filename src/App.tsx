@@ -13,7 +13,11 @@ import {
   Target,
   Clock,
   Cloud,
-  ShieldCheck
+  ShieldCheck,
+  Bell,
+  Command,
+  FileText,
+  Download
 } from 'lucide-react';
 import { db } from './db';
 import { initializeDefaultAccountsIfNeeded } from './services/accountService';
@@ -36,6 +40,14 @@ import { WeeklyPlanView } from './components/WeeklyPlan/WeeklyPlanView';
 import { SyncModal } from './components/Sync/SyncModal';
 import { AuditBackupModal } from './components/Audit/AuditBackupModal';
 import { InstallPwaBanner } from './components/Pwa/InstallPwaBanner';
+import { TerminalShortcutsModal } from './components/Shortcuts/TerminalShortcutsModal';
+import { exportTransactionsToCSV, printFinancialReportPDF } from './services/exportService';
+import {
+  requestNotificationPermission,
+  sendDueObligationsNotification,
+  getUpcomingDueAlerts,
+  type DueAlertItem
+} from './services/notificationService';
 import { triggerFullSync } from './services/syncService';
 import type { Transaction } from './types';
 
@@ -46,6 +58,8 @@ export const App: React.FC = () => {
   const [isDailyIncomeModalOpen, setIsDailyIncomeModalOpen] = useState(false);
   const [isSyncModalOpen, setIsSyncModalOpen] = useState(false);
   const [isAuditModalOpen, setIsAuditModalOpen] = useState(false);
+  const [isShortcutsModalOpen, setIsShortcutsModalOpen] = useState(false);
+  const [dueAlerts, setDueAlerts] = useState<DueAlertItem[]>([]);
   const [txToEdit, setTxToEdit] = useState<Transaction | null>(null);
 
   // Monitoreo de conectividad y sincronización automática
@@ -130,7 +144,72 @@ export const App: React.FC = () => {
   const totalReserves = calculateTotalActiveReserves(reserves);
   const freeBalance = calculateFreeBalance(totalRealBalance, totalReserves);
 
-  // Ordenar transacciones por fecha descendente
+  // Cargar alertas de vencimientos y disparar notificación si corresponde
+  useEffect(() => {
+    const checkAlerts = async () => {
+      const alerts = await getUpcomingDueAlerts();
+      setDueAlerts(alerts);
+      if (typeof window !== 'undefined' && 'Notification' in window && Notification.permission === 'granted') {
+        sendDueObligationsNotification();
+      }
+    };
+    checkAlerts();
+  }, [debts, recurring, reserves]);
+
+  // Atajos de teclado de terminal financiera
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      const target = e.target as HTMLElement;
+      if (['INPUT', 'TEXTAREA', 'SELECT'].includes(target.tagName) || target.isContentEditable) {
+        return;
+      }
+
+      const key = e.key.toLowerCase();
+      if (key === '?' || (e.shiftKey && key === '/')) {
+        e.preventDefault();
+        setIsShortcutsModalOpen((prev) => !prev);
+      } else if (key === 'c' || key === '+') {
+        e.preventDefault();
+        setIsDailyIncomeModalOpen(true);
+      } else if (key === 'm') {
+        e.preventDefault();
+        setTxToEdit(null);
+        setIsTxModalOpen(true);
+      } else if (key === 'a') {
+        e.preventDefault();
+        setIsAuditModalOpen(true);
+      } else if (key === 's' && !e.ctrlKey && !e.metaKey) {
+        e.preventDefault();
+        setIsSyncModalOpen(true);
+      } else if (key === 'p' && !e.ctrlKey && !e.metaKey) {
+        e.preventDefault();
+        printFinancialReportPDF();
+      } else if (key === 'e' && !e.ctrlKey && !e.metaKey) {
+        e.preventDefault();
+        exportTransactionsToCSV();
+      } else if (key === '1') {
+        setActiveTab('dashboard');
+      } else if (key === '2') {
+        setActiveTab('reserves');
+      } else if (key === '3') {
+        setActiveTab('accounts');
+      } else if (key === '4') {
+        setActiveTab('debts');
+      } else if (key === '5') {
+        setActiveTab('transactions');
+      } else if (key === '6') {
+        setActiveTab('savings');
+      } else if (key === '7') {
+        setActiveTab('analytics');
+      } else if (key === '8') {
+        setActiveTab('weekly');
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
   const sortedTransactions = [...transactions].sort(
     (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
   );
@@ -204,6 +283,40 @@ export const App: React.FC = () => {
               ) : (
                 <span className="hidden sm:inline">Nube</span>
               )}
+            </button>
+
+            {/* Botón Alertas de Vencimiento */}
+            <button
+              onClick={async () => {
+                if (typeof window !== 'undefined' && 'Notification' in window && Notification.permission !== 'granted') {
+                  const perm = await requestNotificationPermission();
+                  if (perm === 'granted') {
+                    sendDueObligationsNotification();
+                  }
+                } else {
+                  sendDueObligationsNotification();
+                }
+              }}
+              className={`relative inline-flex items-center justify-center p-2 rounded-full transition border touch-manipulation ${
+                dueAlerts.length > 0
+                  ? 'bg-spider-crimson/15 text-spider-crimson border-spider-crimson/40 hover:bg-spider-crimson/25 shadow-fey-spider-glow'
+                  : 'bg-[#141722] text-fey-mist border-[#242b38] hover:text-white'
+              }`}
+              title={dueAlerts.length > 0 ? `${dueAlerts.length} vencimiento(s) inminente(s)` : 'Alertas de vencimiento'}
+            >
+              <Bell className="w-3.5 h-3.5" />
+              {dueAlerts.length > 0 && (
+                <span className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-spider-crimson border border-black animate-ping" />
+              )}
+            </button>
+
+            {/* Botón Atajos de Teclado */}
+            <button
+              onClick={() => setIsShortcutsModalOpen(true)}
+              className="hidden sm:inline-flex items-center justify-center p-2 rounded-full bg-[#141722] text-fey-mist border border-[#242b38] hover:text-white hover:border-[#38bdf8]/40 transition shadow-fey-button"
+              title="Atajos de teclado de terminal (?)"
+            >
+              <Command className="w-3.5 h-3.5 text-spider-electric" />
             </button>
 
             {isOnline ? (
@@ -467,6 +580,11 @@ export const App: React.FC = () => {
         onClose={() => setIsAuditModalOpen(false)}
       />
 
+      <TerminalShortcutsModal
+        isOpen={isShortcutsModalOpen}
+        onClose={() => setIsShortcutsModalOpen(false)}
+      />
+
       <InstallPwaBanner />
 
       {/* Barra de Navegación Flotante Móvil (Mobile Dock - Gotham & Spider Web) */}
@@ -522,11 +640,11 @@ export const App: React.FC = () => {
       </nav>
 
       {/* Pie de Página */}
-      <footer className="border-t border-[#1a1e28] py-5 px-4 text-center text-xs text-fey-graphite pb-24 md:pb-5 space-y-2">
+      <footer className="border-t border-[#1a1e28] py-5 px-4 text-center text-xs text-fey-graphite pb-24 md:pb-5 space-y-2.5">
         <div>
           Terminal Financiera Personal • Gotham Tech & Spider Web Edition • Sistema de Finanzas Personales ARS
         </div>
-        <div className="flex items-center justify-center gap-3 text-[11px]">
+        <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-4 text-[11px]">
           <button
             onClick={() => setIsAuditModalOpen(true)}
             className="hover:text-batman-gold transition underline underline-offset-4"
@@ -539,6 +657,30 @@ export const App: React.FC = () => {
             className="hover:text-spider-electric transition underline underline-offset-4"
           >
             Estado Nube Supabase
+          </button>
+          <span>•</span>
+          <button
+            onClick={() => printFinancialReportPDF()}
+            className="hover:text-white transition inline-flex items-center gap-1"
+          >
+            <FileText className="w-3 h-3 text-spider-electric" />
+            Balance PDF
+          </button>
+          <span>•</span>
+          <button
+            onClick={() => exportTransactionsToCSV()}
+            className="hover:text-white transition inline-flex items-center gap-1"
+          >
+            <Download className="w-3 h-3 text-fey-growth" />
+            Movimientos CSV
+          </button>
+          <span>•</span>
+          <button
+            onClick={() => setIsShortcutsModalOpen(true)}
+            className="hover:text-batman-gold transition inline-flex items-center gap-1"
+          >
+            <Command className="w-3 h-3 text-batman-gold" />
+            Atajos (?)
           </button>
         </div>
       </footer>
