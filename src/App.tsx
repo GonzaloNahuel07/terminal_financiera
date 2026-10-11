@@ -7,7 +7,8 @@ import {
   LayoutDashboard,
   History,
   Coins,
-  ShieldAlert
+  ShieldAlert,
+  Layers
 } from 'lucide-react';
 import { db } from './db';
 import { initializeDefaultAccountsIfNeeded } from './services/accountService';
@@ -23,11 +24,12 @@ import { TransactionList } from './components/Transactions/TransactionList';
 import { TransactionModal } from './components/Transactions/TransactionModal';
 import { DailyIncomeModal } from './components/Income/DailyIncomeModal';
 import { DebtsAndRecurringView } from './components/DebtsAndRecurringView';
+import { ReservesCenter } from './components/Reserves/ReservesCenter';
 import type { Transaction } from './types';
 
 export const App: React.FC = () => {
   const [isOnline, setIsOnline] = useState<boolean>(navigator.onLine);
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'accounts' | 'debts' | 'transactions'>('dashboard');
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'reserves' | 'accounts' | 'debts' | 'transactions'>('dashboard');
   const [isTxModalOpen, setIsTxModalOpen] = useState(false);
   const [isDailyIncomeModalOpen, setIsDailyIncomeModalOpen] = useState(false);
   const [txToEdit, setTxToEdit] = useState<Transaction | null>(null);
@@ -174,6 +176,19 @@ export const App: React.FC = () => {
             <LayoutDashboard className="w-3.5 h-3.5" />
             Dashboard
           </button>
+
+          <button
+            onClick={() => setActiveTab('reserves')}
+            className={`inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition ${
+              activeTab === 'reserves'
+                ? 'bg-[#191919] text-white border-b-2 border-fey-signal shadow-fey-halo'
+                : 'text-fey-graphite hover:text-white'
+            }`}
+          >
+            <Layers className="w-3.5 h-3.5 text-fey-growth" />
+            Centro de Reservas ({reserves.length})
+          </button>
+
           <button
             onClick={() => setActiveTab('accounts')}
             className={`inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition ${
@@ -185,6 +200,7 @@ export const App: React.FC = () => {
             <Wallet className="w-3.5 h-3.5" />
             Cuentas ({accounts.length})
           </button>
+
           <button
             onClick={() => setActiveTab('debts')}
             className={`inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition ${
@@ -196,6 +212,7 @@ export const App: React.FC = () => {
             <ShieldAlert className="w-3.5 h-3.5 text-fey-ember" />
             Deudas y Gastos Fijos ({debts.length + recurring.length})
           </button>
+
           <button
             onClick={() => setActiveTab('transactions')}
             className={`inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition ${
@@ -229,14 +246,28 @@ export const App: React.FC = () => {
           />
         )}
 
-        {/* Vista 2: Sección de Cuentas */}
+        {/* Vista 2: Centro de Reservas (Módulo 6) */}
+        {activeTab === 'reserves' && (
+          <section className="space-y-4">
+            <ReservesCenter
+              reserves={reserves}
+              debts={debts}
+              recurring={recurring}
+              savingsGoals={savingsGoals}
+              totalRealBalance={totalRealBalance}
+              freeBalance={freeBalance}
+            />
+          </section>
+        )}
+
+        {/* Vista 3: Sección de Cuentas */}
         {activeTab === 'accounts' && (
           <section className="space-y-4">
             <AccountList accounts={accounts} />
           </section>
         )}
 
-        {/* Vista 3: Deudas y Gastos Fijos (Módulo 5) */}
+        {/* Vista 4: Deudas y Gastos Fijos */}
         {activeTab === 'debts' && (
           <section className="space-y-4">
             <DebtsAndRecurringView
@@ -248,7 +279,7 @@ export const App: React.FC = () => {
           </section>
         )}
 
-        {/* Vista 4: Historial de Movimientos */}
+        {/* Vista 5: Historial de Movimientos */}
         {activeTab === 'transactions' && (
           <section className="space-y-4">
             <TransactionList
@@ -282,7 +313,7 @@ export const App: React.FC = () => {
 
       {/* Pie de Página */}
       <footer className="border-t border-[#1f1f1f] py-5 px-4 text-center text-xs text-fey-graphite">
-        Terminal Financiera Personal • Estética Nocturna Fey • Módulo 5 Activo
+        Terminal Financiera Personal • Estética Nocturna Fey • Módulo 6: Centro de Reservas Activo
       </footer>
     </div>
   );
