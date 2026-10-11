@@ -24,7 +24,7 @@ interface DashboardProps {
   freeBalance: AmountPesos;
   onOpenDailyIncomeModal: () => void;
   onOpenTransactionModal: () => void;
-  onNavigateToTab: (tab: 'accounts' | 'transactions' | 'debts') => void;
+  onNavigateToTab: (tab: 'dashboard' | 'reserves' | 'accounts' | 'debts' | 'transactions' | 'analytics' | 'savings') => void;
 }
 
 export const Dashboard: React.FC<DashboardProps> = ({
@@ -81,6 +81,20 @@ export const Dashboard: React.FC<DashboardProps> = ({
         >
           {debts.length + recurring.length} Compromisos y Deudas
           <ArrowUpRight className="w-3.5 h-3.5 text-fey-smoke" />
+        </button>
+        <button
+          onClick={() => onNavigateToTab('analytics')}
+          className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[#131313] hover:bg-[#1f1f1f] text-xs font-medium text-fey-signal hover:text-white border border-[#262626] transition"
+        >
+          Dashboards Visuales
+          <ArrowUpRight className="w-3.5 h-3.5 text-fey-signal" />
+        </button>
+        <button
+          onClick={() => onNavigateToTab('savings')}
+          className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[#131313] hover:bg-[#1f1f1f] text-xs font-medium text-fey-growth hover:text-white border border-[#262626] transition"
+        >
+          {savingsGoals.length} Metas & Fondo Emergencia
+          <ArrowUpRight className="w-3.5 h-3.5 text-fey-growth" />
         </button>
         <button
           onClick={onOpenTransactionModal}

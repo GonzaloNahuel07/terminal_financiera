@@ -8,7 +8,9 @@ import {
   History,
   Coins,
   ShieldAlert,
-  Layers
+  Layers,
+  BarChart3,
+  Target
 } from 'lucide-react';
 import { db } from './db';
 import { initializeDefaultAccountsIfNeeded } from './services/accountService';
@@ -25,11 +27,13 @@ import { TransactionModal } from './components/Transactions/TransactionModal';
 import { DailyIncomeModal } from './components/Income/DailyIncomeModal';
 import { DebtsAndRecurringView } from './components/DebtsAndRecurringView';
 import { ReservesCenter } from './components/Reserves/ReservesCenter';
+import { VisualDashboard } from './components/Analytics/VisualDashboard';
+import { SavingsList } from './components/Savings/SavingsList';
 import type { Transaction } from './types';
 
 export const App: React.FC = () => {
   const [isOnline, setIsOnline] = useState<boolean>(navigator.onLine);
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'reserves' | 'accounts' | 'debts' | 'transactions'>('dashboard');
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'reserves' | 'accounts' | 'debts' | 'transactions' | 'analytics' | 'savings'>('dashboard');
   const [isTxModalOpen, setIsTxModalOpen] = useState(false);
   const [isDailyIncomeModalOpen, setIsDailyIncomeModalOpen] = useState(false);
   const [txToEdit, setTxToEdit] = useState<Transaction | null>(null);
@@ -224,6 +228,30 @@ export const App: React.FC = () => {
             <History className="w-3.5 h-3.5" />
             Movimientos ({transactions.length})
           </button>
+
+          <button
+            onClick={() => setActiveTab('savings')}
+            className={`inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition ${
+              activeTab === 'savings'
+                ? 'bg-[#191919] text-white border-b-2 border-fey-signal shadow-fey-halo'
+                : 'text-fey-graphite hover:text-white'
+            }`}
+          >
+            <Target className="w-3.5 h-3.5 text-fey-growth" />
+            Ahorro & Metas ({savingsGoals.length})
+          </button>
+
+          <button
+            onClick={() => setActiveTab('analytics')}
+            className={`inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition ${
+              activeTab === 'analytics'
+                ? 'bg-[#191919] text-white border-b-2 border-fey-signal shadow-fey-halo'
+                : 'text-fey-graphite hover:text-white'
+            }`}
+          >
+            <BarChart3 className="w-3.5 h-3.5 text-fey-signal" />
+            Dashboards Visuales
+          </button>
         </nav>
 
         {/* Vista 1: Dashboard Principal */}
@@ -292,6 +320,30 @@ export const App: React.FC = () => {
             />
           </section>
         )}
+
+        {/* Vista 6: Ahorro y Fondo de Emergencia (Módulo 7) */}
+        {activeTab === 'savings' && (
+          <section className="space-y-4">
+            <SavingsList
+              savingsGoals={savingsGoals}
+              freeBalance={freeBalance}
+              recurring={recurring}
+            />
+          </section>
+        )}
+
+        {/* Vista 7: Dashboards Visuales y Analítica */}
+        {activeTab === 'analytics' && (
+          <section className="space-y-4">
+            <VisualDashboard
+              transactions={sortedTransactions}
+              accounts={accounts}
+              debts={debts}
+              savingsGoals={savingsGoals}
+              reserves={reserves}
+            />
+          </section>
+        )}
       </main>
 
       {/* Modales */}
@@ -313,7 +365,7 @@ export const App: React.FC = () => {
 
       {/* Pie de Página */}
       <footer className="border-t border-[#1f1f1f] py-5 px-4 text-center text-xs text-fey-graphite">
-        Terminal Financiera Personal • Estética Nocturna Fey • Módulo 6: Centro de Reservas Activo
+        Terminal Financiera Personal • Estética Nocturna Fey • Módulo 7: Ahorro, Fondo de Emergencia & Dashboards Visuales
       </footer>
     </div>
   );
