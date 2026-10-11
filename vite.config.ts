@@ -9,30 +9,42 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'masked-icon.svg'],
+      includeAssets: ['favicon.svg', 'icon.svg'],
       manifest: {
-        name: 'Asistente Financiero Personal',
-        short_name: 'Finanzas',
-        description: 'PWA para administración de ingresos diarios, deudas y reservas financieras',
-        theme_color: '#047857',
-        background_color: '#0f172a',
+        name: 'Terminal Financiera • Gotham & Spider Web HUD',
+        short_name: 'Finanzas HUD',
+        description: 'PWA táctica para administración de liquidez, ingresos diarios, deudas y reservas en ARS',
+        theme_color: '#08090c',
+        background_color: '#08090c',
         display: 'standalone',
         orientation: 'portrait-primary',
+        start_url: '/',
         icons: [
           {
-            src: '/pwa-192x192.png',
-            sizes: '192x192',
-            type: 'image/png'
+            src: '/icon.svg',
+            sizes: '192x192 512x512',
+            type: 'image/svg+xml',
+            purpose: 'any maskable'
+          }
+        ],
+        shortcuts: [
+          {
+            name: '+ Registrar Cobro',
+            short_name: 'Cobro',
+            url: '/?action=daily-income',
+            icons: [{ src: '/icon.svg', sizes: '192x192' }]
           },
           {
-            src: '/pwa-512x512.png',
-            sizes: '512x512',
-            type: 'image/png'
+            name: 'Centro de Reservas',
+            short_name: 'Reservas',
+            url: '/?tab=reserves',
+            icons: [{ src: '/icon.svg', sizes: '192x192' }]
           }
         ]
       },
       workbox: {
-        globPatterns: ['**/*.{js,css,html,ico,png,svg}']
+        globPatterns: ['**/*.{js,css,html,ico,png,svg}'],
+        navigateFallback: '/index.html'
       }
     })
   ],

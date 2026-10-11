@@ -12,7 +12,8 @@ import {
   BarChart3,
   Target,
   Clock,
-  Cloud
+  Cloud,
+  ShieldCheck
 } from 'lucide-react';
 import { db } from './db';
 import { initializeDefaultAccountsIfNeeded } from './services/accountService';
@@ -33,6 +34,8 @@ import { VisualDashboard } from './components/Analytics/VisualDashboard';
 import { SavingsList } from './components/Savings/SavingsList';
 import { WeeklyPlanView } from './components/WeeklyPlan/WeeklyPlanView';
 import { SyncModal } from './components/Sync/SyncModal';
+import { AuditBackupModal } from './components/Audit/AuditBackupModal';
+import { InstallPwaBanner } from './components/Pwa/InstallPwaBanner';
 import { triggerFullSync } from './services/syncService';
 import type { Transaction } from './types';
 
@@ -42,6 +45,7 @@ export const App: React.FC = () => {
   const [isTxModalOpen, setIsTxModalOpen] = useState(false);
   const [isDailyIncomeModalOpen, setIsDailyIncomeModalOpen] = useState(false);
   const [isSyncModalOpen, setIsSyncModalOpen] = useState(false);
+  const [isAuditModalOpen, setIsAuditModalOpen] = useState(false);
   const [txToEdit, setTxToEdit] = useState<Transaction | null>(null);
 
   // Monitoreo de conectividad y sincronización automática
@@ -172,6 +176,16 @@ export const App: React.FC = () => {
               <Coins className="w-3.5 h-3.5" />
               <span className="hidden xs:inline">+ Cobro</span>
               <span className="xs:hidden">+</span>
+            </button>
+
+            {/* Botón de Auditoría & Diagnóstico */}
+            <button
+              onClick={() => setIsAuditModalOpen(true)}
+              className="inline-flex items-center gap-1 sm:gap-1.5 px-2.5 py-1.5 rounded-full text-xs font-semibold transition border touch-manipulation bg-[#141722] text-batman-gold border-[#242b38] hover:text-white hover:border-batman-gold/40 shadow-fey-button"
+              title="Auditoría de integridad contable y copias de seguridad"
+            >
+              <ShieldCheck className="w-3.5 h-3.5 text-batman-gold" />
+              <span className="hidden sm:inline">Auditoría</span>
             </button>
 
             {/* Botón de Sincronización y Outbox */}
@@ -448,6 +462,13 @@ export const App: React.FC = () => {
         outboxItems={outboxItems}
       />
 
+      <AuditBackupModal
+        isOpen={isAuditModalOpen}
+        onClose={() => setIsAuditModalOpen(false)}
+      />
+
+      <InstallPwaBanner />
+
       {/* Barra de Navegación Flotante Móvil (Mobile Dock - Gotham & Spider Web) */}
       <nav className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#08090c]/90 backdrop-blur-xl border-t border-[#1a1e28] pb-safe px-2 py-1.5 flex items-center justify-around shadow-fey-modal">
         <button
@@ -501,8 +522,25 @@ export const App: React.FC = () => {
       </nav>
 
       {/* Pie de Página */}
-      <footer className="border-t border-[#1a1e28] py-5 px-4 text-center text-xs text-fey-graphite pb-24 md:pb-5">
-        Terminal Financiera Personal • Gotham Tech & Spider Web Edition • Sistema de Finanzas Personales ARS
+      <footer className="border-t border-[#1a1e28] py-5 px-4 text-center text-xs text-fey-graphite pb-24 md:pb-5 space-y-2">
+        <div>
+          Terminal Financiera Personal • Gotham Tech & Spider Web Edition • Sistema de Finanzas Personales ARS
+        </div>
+        <div className="flex items-center justify-center gap-3 text-[11px]">
+          <button
+            onClick={() => setIsAuditModalOpen(true)}
+            className="hover:text-batman-gold transition underline underline-offset-4"
+          >
+            Diagnóstico de Salud & Respaldos
+          </button>
+          <span>•</span>
+          <button
+            onClick={() => setIsSyncModalOpen(true)}
+            className="hover:text-spider-electric transition underline underline-offset-4"
+          >
+            Estado Nube Supabase
+          </button>
+        </div>
       </footer>
     </div>
   );
