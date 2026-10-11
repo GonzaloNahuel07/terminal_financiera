@@ -24,7 +24,7 @@ interface DashboardProps {
   freeBalance: AmountPesos;
   onOpenDailyIncomeModal: () => void;
   onOpenTransactionModal: () => void;
-  onNavigateToTab: (tab: 'dashboard' | 'reserves' | 'accounts' | 'debts' | 'transactions' | 'analytics' | 'savings') => void;
+  onNavigateToTab: (tab: 'dashboard' | 'reserves' | 'accounts' | 'debts' | 'transactions' | 'analytics' | 'savings' | 'weekly') => void;
 }
 
 export const Dashboard: React.FC<DashboardProps> = ({
@@ -95,6 +95,13 @@ export const Dashboard: React.FC<DashboardProps> = ({
         >
           {savingsGoals.length} Metas & Fondo Emergencia
           <ArrowUpRight className="w-3.5 h-3.5 text-fey-growth" />
+        </button>
+        <button
+          onClick={() => onNavigateToTab('weekly')}
+          className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[#131313] hover:bg-[#1f1f1f] text-xs font-medium text-fey-signal hover:text-white border border-[#262626] transition"
+        >
+          Plan Semanal
+          <ArrowUpRight className="w-3.5 h-3.5 text-fey-signal" />
         </button>
         <button
           onClick={onOpenTransactionModal}

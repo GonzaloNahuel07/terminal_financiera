@@ -10,7 +10,8 @@ import {
   ShieldAlert,
   Layers,
   BarChart3,
-  Target
+  Target,
+  Clock
 } from 'lucide-react';
 import { db } from './db';
 import { initializeDefaultAccountsIfNeeded } from './services/accountService';
@@ -29,11 +30,12 @@ import { DebtsAndRecurringView } from './components/DebtsAndRecurringView';
 import { ReservesCenter } from './components/Reserves/ReservesCenter';
 import { VisualDashboard } from './components/Analytics/VisualDashboard';
 import { SavingsList } from './components/Savings/SavingsList';
+import { WeeklyPlanView } from './components/WeeklyPlan/WeeklyPlanView';
 import type { Transaction } from './types';
 
 export const App: React.FC = () => {
   const [isOnline, setIsOnline] = useState<boolean>(navigator.onLine);
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'reserves' | 'accounts' | 'debts' | 'transactions' | 'analytics' | 'savings'>('dashboard');
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'reserves' | 'accounts' | 'debts' | 'transactions' | 'analytics' | 'savings' | 'weekly'>('dashboard');
   const [isTxModalOpen, setIsTxModalOpen] = useState(false);
   const [isDailyIncomeModalOpen, setIsDailyIncomeModalOpen] = useState(false);
   const [txToEdit, setTxToEdit] = useState<Transaction | null>(null);
@@ -83,6 +85,11 @@ export const App: React.FC = () => {
 
   const savingsGoals = useLiveQuery(
     () => db.savingsGoals.filter((g) => !g.isDeleted).toArray(),
+    []
+  ) ?? [];
+
+  const weeklyPlans = useLiveQuery(
+    () => db.weeklyPlans.toArray(),
     []
   ) ?? [];
 
@@ -252,6 +259,18 @@ export const App: React.FC = () => {
             <BarChart3 className="w-3.5 h-3.5 text-fey-signal" />
             Dashboards Visuales
           </button>
+
+          <button
+            onClick={() => setActiveTab('weekly')}
+            className={`inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition ${
+              activeTab === 'weekly'
+                ? 'bg-[#191919] text-white border-b-2 border-fey-signal shadow-fey-halo'
+                : 'text-fey-graphite hover:text-white'
+            }`}
+          >
+            <Clock className="w-3.5 h-3.5 text-fey-signal" />
+            Plan Semanal
+          </button>
         </nav>
 
         {/* Vista 1: Dashboard Principal */}
@@ -344,6 +363,17 @@ export const App: React.FC = () => {
             />
           </section>
         )}
+
+        {/* Vista 8: Plan Semanal y Cierre de Ciclos (Módulo 8) */}
+        {activeTab === 'weekly' && (
+          <section className="space-y-4">
+            <WeeklyPlanView
+              weeklyPlans={weeklyPlans}
+              debts={debts}
+              recurring={recurring}
+            />
+          </section>
+        )}
       </main>
 
       {/* Modales */}
@@ -365,7 +395,7 @@ export const App: React.FC = () => {
 
       {/* Pie de Página */}
       <footer className="border-t border-[#1f1f1f] py-5 px-4 text-center text-xs text-fey-graphite">
-        Terminal Financiera Personal • Estética Nocturna Fey • Módulo 7: Ahorro, Fondo de Emergencia & Dashboards Visuales
+        Terminal Financiera Personal • Estética Nocturna Fey • Módulo 8: Plan Semanal & Cierre de Ciclos
       </footer>
     </div>
   );
