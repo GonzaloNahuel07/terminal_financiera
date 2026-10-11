@@ -11,7 +11,8 @@ import {
   Layers,
   BarChart3,
   Target,
-  Clock
+  Clock,
+  Cloud
 } from 'lucide-react';
 import { db } from './db';
 import { initializeDefaultAccountsIfNeeded } from './services/accountService';
@@ -31,6 +32,8 @@ import { ReservesCenter } from './components/Reserves/ReservesCenter';
 import { VisualDashboard } from './components/Analytics/VisualDashboard';
 import { SavingsList } from './components/Savings/SavingsList';
 import { WeeklyPlanView } from './components/WeeklyPlan/WeeklyPlanView';
+import { SyncModal } from './components/Sync/SyncModal';
+import { triggerFullSync } from './services/syncService';
 import type { Transaction } from './types';
 
 export const App: React.FC = () => {
@@ -38,11 +41,15 @@ export const App: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'dashboard' | 'reserves' | 'accounts' | 'debts' | 'transactions' | 'analytics' | 'savings' | 'weekly'>('dashboard');
   const [isTxModalOpen, setIsTxModalOpen] = useState(false);
   const [isDailyIncomeModalOpen, setIsDailyIncomeModalOpen] = useState(false);
+  const [isSyncModalOpen, setIsSyncModalOpen] = useState(false);
   const [txToEdit, setTxToEdit] = useState<Transaction | null>(null);
 
-  // Monitoreo de conectividad de red
+  // Monitoreo de conectividad y sincronización automática
   useEffect(() => {
-    const handleOnline = () => setIsOnline(true);
+    const handleOnline = () => {
+      setIsOnline(true);
+      triggerFullSync();
+    };
     const handleOffline = () => setIsOnline(false);
 
     window.addEventListener('online', handleOnline);
@@ -51,9 +58,20 @@ export const App: React.FC = () => {
     // Inicializar cuentas por defecto si está vacío
     initializeDefaultAccountsIfNeeded();
 
+    // Sincronización inicial y periódica cada 60s si está online
+    if (navigator.onLine) {
+      triggerFullSync();
+    }
+    const syncInterval = setInterval(() => {
+      if (navigator.onLine) {
+        triggerFullSync();
+      }
+    }, 60000);
+
     return () => {
       window.removeEventListener('online', handleOnline);
       window.removeEventListener('offline', handleOffline);
+      clearInterval(syncInterval);
     };
   }, []);
 
@@ -98,6 +116,11 @@ export const App: React.FC = () => {
     []
   ) ?? 0;
 
+  const outboxItems = useLiveQuery(
+    () => db.syncOutbox.toArray(),
+    []
+  ) ?? [];
+
   // Cálculos contables puros en tiempo real
   const totalRealBalance = calculateTotalRealBalance(accounts, transactions);
   const totalReserves = calculateTotalActiveReserves(reserves);
@@ -140,11 +163,23 @@ export const App: React.FC = () => {
               <span>+ Cobro Diario</span>
             </button>
 
-            {pendingSyncCount > 0 && (
-              <span className="hidden sm:inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-semibold bg-[#191919] text-fey-ember border border-[#262626]">
-                {pendingSyncCount} en cola
-              </span>
-            )}
+            {/* Botón de Sincronización y Outbox */}
+            <button
+              onClick={() => setIsSyncModalOpen(true)}
+              className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition border ${
+                pendingSyncCount > 0
+                  ? 'bg-[#201411] text-fey-ember border-[#482218] hover:bg-[#2c1a16]'
+                  : 'bg-[#141414] text-fey-mist border-[#242424] hover:text-white hover:border-[#383838]'
+              }`}
+              title="Abrir estado de sincronización y configuración de Supabase"
+            >
+              <Cloud className="w-3.5 h-3.5 text-fey-signal" />
+              {pendingSyncCount > 0 ? (
+                <span>{pendingSyncCount} en cola</span>
+              ) : (
+                <span className="hidden sm:inline">Nube</span>
+              )}
+            </button>
 
             {isOnline ? (
               <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium text-fey-graphite border border-[#222222]">
@@ -393,9 +428,16 @@ export const App: React.FC = () => {
         accounts={accounts}
       />
 
+      <SyncModal
+        isOpen={isSyncModalOpen}
+        onClose={() => setIsSyncModalOpen(false)}
+        isOnline={isOnline}
+        outboxItems={outboxItems}
+      />
+
       {/* Pie de Página */}
       <footer className="border-t border-[#1f1f1f] py-5 px-4 text-center text-xs text-fey-graphite">
-        Terminal Financiera Personal • Estética Nocturna Fey • Módulo 8: Plan Semanal & Cierre de Ciclos
+        Terminal Financiera Personal • Estética Nocturna Fey • Módulo 9: Sincronización Segura Supabase & Outbox Offline-First
       </footer>
     </div>
   );
