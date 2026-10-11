@@ -236,10 +236,15 @@ export const SyncModal: React.FC<SyncModalProps> = ({
                   key={item.id}
                   className="p-2.5 bg-[#141414] rounded-lg border border-[#242424] flex items-center justify-between text-xs"
                 >
-                  <div className="space-y-0.5">
+                  <div className="space-y-0.5 max-w-[75%]">
                     <span className="font-semibold text-white block capitalize">
                       {item.action}: {item.entityName.replace('_', ' ')}
                     </span>
+                    {item.errorMessage && (
+                      <span className="text-[10px] text-red-400 block font-mono bg-red-950/40 px-1.5 py-0.5 rounded border border-red-900/40 break-all">
+                        {item.errorMessage}
+                      </span>
+                    )}
                     <span className="text-[10px] font-mono text-fey-smoke block">
                       {item.createdAt.slice(0, 19).replace('T', ' ')}
                     </span>

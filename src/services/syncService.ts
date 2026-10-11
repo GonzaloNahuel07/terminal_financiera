@@ -10,6 +10,7 @@ const STORAGE_KEY_LAST_SYNC = 'fey_last_sync_timestamp';
 export function toSnakeCaseRecord(obj: Record<string, unknown>): Record<string, unknown> {
   const result: Record<string, unknown> = {};
   for (const [key, value] of Object.entries(obj)) {
+    if (value === undefined) continue;
     const snakeKey = key.replace(/([A-Z])/g, '_$1').toLowerCase();
     result[snakeKey] = value;
   }
@@ -83,9 +84,13 @@ export async function processSyncOutbox(): Promise<{ processed: number; failed: 
       // Si todo salió bien, eliminar de la cola de salida local
       await db.syncOutbox.delete(item.id);
       processed++;
-    } catch (err) {
+    } catch (err: any) {
       failed++;
-      const errorMessage = err instanceof Error ? err.message : 'Error desconocido de sincronización';
+      const errorMessage =
+        err?.message ||
+        err?.details ||
+        err?.hint ||
+        (err instanceof Error ? err.message : 'Error desconocido de sincronización');
       await db.syncOutbox.update(item.id, {
         syncStatus: 'failed',
         errorMessage
@@ -183,12 +188,18 @@ export async function triggerFullSync(): Promise<{
     const { processed, failed } = await processSyncOutbox();
     const { pulled } = await pullRemoteChanges();
 
+    let detailedError: string | undefined = undefined;
+    if (failed > 0) {
+      const firstFailed = await db.syncOutbox.filter((i) => i.syncStatus === 'failed').first();
+      detailedError = firstFailed?.errorMessage || 'Algunos elementos no pudieron sincronizarse';
+    }
+
     return {
       success: failed === 0,
       pushed: processed,
       failed,
       pulled,
-      error: failed > 0 ? 'Algunos elementos no pudieron sincronizarse' : undefined
+      error: detailedError
     };
   } catch (err) {
     return {
