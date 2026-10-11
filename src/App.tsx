@@ -1,6 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
-import { Wifi, WifiOff, Wallet, Layers, History } from 'lucide-react';
+import {
+  Wifi,
+  WifiOff,
+  Wallet,
+  LayoutDashboard,
+  History,
+  Coins
+} from 'lucide-react';
 import { db } from './db';
 import { initializeDefaultAccountsIfNeeded } from './services/accountService';
 import {
@@ -9,15 +16,18 @@ import {
   calculateFreeBalance
 } from './core/calculator';
 import { SummaryHeader } from './components/SummaryHeader';
+import { Dashboard } from './components/Dashboard/Dashboard';
 import { AccountList } from './components/Accounts/AccountList';
 import { TransactionList } from './components/Transactions/TransactionList';
 import { TransactionModal } from './components/Transactions/TransactionModal';
+import { DailyIncomeModal } from './components/Income/DailyIncomeModal';
 import type { Transaction } from './types';
 
 export const App: React.FC = () => {
   const [isOnline, setIsOnline] = useState<boolean>(navigator.onLine);
-  const [activeTab, setActiveTab] = useState<'all' | 'accounts' | 'transactions'>('all');
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'accounts' | 'transactions'>('dashboard');
   const [isTxModalOpen, setIsTxModalOpen] = useState(false);
+  const [isDailyIncomeModalOpen, setIsDailyIncomeModalOpen] = useState(false);
   const [txToEdit, setTxToEdit] = useState<Transaction | null>(null);
 
   // Monitoreo de conectividad de red
@@ -53,6 +63,21 @@ export const App: React.FC = () => {
     []
   ) ?? [];
 
+  const debts = useLiveQuery(
+    () => db.debts.filter((d) => !d.isDeleted).toArray(),
+    []
+  ) ?? [];
+
+  const recurring = useLiveQuery(
+    () => db.recurringObligations.filter((r) => !r.isDeleted).toArray(),
+    []
+  ) ?? [];
+
+  const savingsGoals = useLiveQuery(
+    () => db.savingsGoals.filter((g) => !g.isDeleted).toArray(),
+    []
+  ) ?? [];
+
   const pendingSyncCount = useLiveQuery(
     () => db.syncOutbox.filter((s) => s.syncStatus === 'pending').count(),
     []
@@ -81,15 +106,23 @@ export const App: React.FC = () => {
               <h1 className="text-base sm:text-lg font-black tracking-tight text-white leading-tight">
                 Asistente Financiero
               </h1>
-              <p className="text-[11px] text-slate-400">PWA Offline-First • ARS Pesos</p>
+              <p className="text-[11px] text-slate-400">PWA Inteligente • Pesos Argentinos (ARS)</p>
             </div>
           </div>
 
-          {/* Indicadores de Conexión y Cola Outbox */}
+          {/* Acciones Rápidas y Conectividad */}
           <div className="flex items-center gap-2">
+            <button
+              onClick={() => setIsDailyIncomeModalOpen(true)}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold text-xs transition shadow-md shadow-emerald-500/20"
+            >
+              <Coins className="w-3.5 h-3.5" />
+              <span>+ Cobro Diario</span>
+            </button>
+
             {pendingSyncCount > 0 && (
               <span className="hidden sm:inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold bg-amber-500/10 text-amber-400 border border-amber-500/20">
-                {pendingSyncCount} pendientes de sync
+                {pendingSyncCount} en cola
               </span>
             )}
 
@@ -121,25 +154,25 @@ export const App: React.FC = () => {
           }}
         />
 
-        {/* Pestañas de Navegación Rápida */}
-        <div className="flex items-center gap-2 border-b border-slate-800 pb-2">
+        {/* Pestañas de Navegación Principal */}
+        <nav className="flex items-center gap-2 border-b border-slate-800 pb-2">
           <button
-            onClick={() => setActiveTab('all')}
-            className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition ${
-              activeTab === 'all'
-                ? 'bg-slate-800 text-emerald-400 border border-slate-700'
-                : 'text-slate-400 hover:text-white'
+            onClick={() => setActiveTab('dashboard')}
+            className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition ${
+              activeTab === 'dashboard'
+                ? 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/30'
+                : 'text-slate-400 hover:text-white hover:bg-slate-900'
             }`}
           >
-            <Layers className="w-4 h-4" />
-            Vista General
+            <LayoutDashboard className="w-4 h-4" />
+            Dashboard
           </button>
           <button
             onClick={() => setActiveTab('accounts')}
-            className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition ${
+            className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition ${
               activeTab === 'accounts'
-                ? 'bg-slate-800 text-emerald-400 border border-slate-700'
-                : 'text-slate-400 hover:text-white'
+                ? 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/30'
+                : 'text-slate-400 hover:text-white hover:bg-slate-900'
             }`}
           >
             <Wallet className="w-4 h-4" />
@@ -147,27 +180,47 @@ export const App: React.FC = () => {
           </button>
           <button
             onClick={() => setActiveTab('transactions')}
-            className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition ${
+            className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition ${
               activeTab === 'transactions'
-                ? 'bg-slate-800 text-emerald-400 border border-slate-700'
-                : 'text-slate-400 hover:text-white'
+                ? 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/30'
+                : 'text-slate-400 hover:text-white hover:bg-slate-900'
             }`}
           >
             <History className="w-4 h-4" />
-            Historial ({transactions.length})
+            Movimientos ({transactions.length})
           </button>
-        </div>
+        </nav>
 
-        {/* Sección de Cuentas */}
-        {(activeTab === 'all' || activeTab === 'accounts') && (
+        {/* Vista 1: Dashboard Principal */}
+        {activeTab === 'dashboard' && (
+          <Dashboard
+            accounts={accounts}
+            transactions={sortedTransactions}
+            debts={debts}
+            recurring={recurring}
+            savingsGoals={savingsGoals}
+            reserves={reserves}
+            totalRealBalance={totalRealBalance}
+            freeBalance={freeBalance}
+            onOpenDailyIncomeModal={() => setIsDailyIncomeModalOpen(true)}
+            onOpenTransactionModal={() => {
+              setTxToEdit(null);
+              setIsTxModalOpen(true);
+            }}
+            onNavigateToTab={setActiveTab}
+          />
+        )}
+
+        {/* Vista 2: Sección de Cuentas */}
+        {activeTab === 'accounts' && (
           <section className="space-y-4">
             <AccountList accounts={accounts} />
           </section>
         )}
 
-        {/* Sección de Movimientos */}
-        {(activeTab === 'all' || activeTab === 'transactions') && (
-          <section className="space-y-4 pt-2">
+        {/* Vista 3: Sección de Historial de Movimientos */}
+        {activeTab === 'transactions' && (
+          <section className="space-y-4">
             <TransactionList
               transactions={sortedTransactions}
               accounts={accounts}
@@ -180,7 +233,7 @@ export const App: React.FC = () => {
         )}
       </main>
 
-      {/* Modal de Transacciones */}
+      {/* Modal de Transacciones Estándar */}
       <TransactionModal
         isOpen={isTxModalOpen}
         onClose={() => {
@@ -191,9 +244,16 @@ export const App: React.FC = () => {
         transactionToEdit={txToEdit}
       />
 
+      {/* Modal de Cobro Diario Variable con Asistente */}
+      <DailyIncomeModal
+        isOpen={isDailyIncomeModalOpen}
+        onClose={() => setIsDailyIncomeModalOpen(false)}
+        accounts={accounts}
+      />
+
       {/* Pie de Página */}
       <footer className="border-t border-slate-800/80 py-4 px-4 text-center text-xs text-slate-500">
-        Asistente Financiero Personal PWA • Módulo 3: Cuentas y Movimientos Activo
+        Asistente Financiero Personal PWA • Módulo 4: Ingresos Diarios y Dashboard Activo
       </footer>
     </div>
   );
