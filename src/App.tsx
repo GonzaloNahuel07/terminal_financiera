@@ -132,41 +132,50 @@ export const App: React.FC = () => {
   );
 
   return (
-    <div className="min-h-screen bg-[#0b0b0b] text-white flex flex-col font-sans selection:bg-white selection:text-black">
+    <div className="min-h-screen bg-[#0b0b0b] text-white flex flex-col font-sans selection:bg-white selection:text-black relative">
+      {/* Fondo Ambiental Animado Nocturno */}
+      <div className="fey-ambient-canvas" aria-hidden="true">
+        <div className="fey-orb-ember animate-float-slow" />
+        <div className="fey-orb-signal animate-float-delayed" />
+        <div className="fey-orb-growth animate-pulse-glow" />
+      </div>
+      <div className="fey-grid-overlay" aria-hidden="true" />
+
       {/* Barra de Navegación Superior Estilo Fey */}
-      <header className="border-b border-[#1f1f1f] bg-[#0b0b0b]/90 backdrop-blur-md sticky top-0 z-40 px-4 py-3 sm:px-6">
-        <div className="max-w-6xl mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="p-2 rounded-xl bg-[#191919] border border-[#2a2a2a] text-white shadow-fey-button">
+      <header className="border-b border-[#1f1f1f] bg-[#0b0b0b]/90 backdrop-blur-md sticky top-0 z-40 px-3 py-2.5 sm:px-6 sm:py-3 relative">
+        <div className="max-w-6xl mx-auto flex items-center justify-between gap-2">
+          <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
+            <div className="p-1.5 sm:p-2 rounded-xl bg-[#191919] border border-[#2a2a2a] text-white shadow-fey-button shrink-0">
               <Wallet className="w-4 h-4 text-fey-mist" />
             </div>
-            <div>
+            <div className="min-w-0">
               <div className="flex items-center gap-2">
-                <h1 className="text-sm sm:text-base font-bold tracking-fey-heading text-white leading-tight">
+                <h1 className="text-xs sm:text-base font-bold tracking-fey-heading text-white leading-tight truncate">
                   Terminal Financiera
                 </h1>
                 <span className="hidden sm:inline-block text-[10px] uppercase font-bold tracking-widest text-fey-graphite px-2 py-0.5 rounded-full border border-[#222222]">
                   ARS • Calibre
                 </span>
               </div>
-              <p className="text-[11px] text-fey-graphite">Gestión de Liquidez y Compromisos</p>
+              <p className="text-[10px] sm:text-[11px] text-fey-graphite truncate">Liquidez y Control Inteligente</p>
             </div>
           </div>
 
           {/* Acciones Rápidas Fey (99px Pills) */}
-          <div className="flex items-center gap-2.5">
+          <div className="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
             <button
               onClick={() => setIsDailyIncomeModalOpen(true)}
-              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white text-black hover:bg-fey-pale font-bold text-xs transition shadow-fey-button active:scale-95"
+              className="inline-flex items-center gap-1 sm:gap-1.5 px-3 py-1.5 rounded-full bg-white text-black hover:bg-fey-pale font-bold text-xs transition shadow-fey-button active:scale-95 touch-manipulation"
             >
               <Coins className="w-3.5 h-3.5" />
-              <span>+ Cobro Diario</span>
+              <span className="hidden xs:inline">+ Cobro</span>
+              <span className="xs:hidden">+</span>
             </button>
 
             {/* Botón de Sincronización y Outbox */}
             <button
               onClick={() => setIsSyncModalOpen(true)}
-              className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition border ${
+              className={`inline-flex items-center gap-1 sm:gap-1.5 px-2.5 py-1.5 rounded-full text-xs font-semibold transition border touch-manipulation ${
                 pendingSyncCount > 0
                   ? 'bg-[#201411] text-fey-ember border-[#482218] hover:bg-[#2c1a16]'
                   : 'bg-[#141414] text-fey-mist border-[#242424] hover:text-white hover:border-[#383838]'
@@ -175,29 +184,29 @@ export const App: React.FC = () => {
             >
               <Cloud className="w-3.5 h-3.5 text-fey-signal" />
               {pendingSyncCount > 0 ? (
-                <span>{pendingSyncCount} en cola</span>
+                <span>{pendingSyncCount}</span>
               ) : (
                 <span className="hidden sm:inline">Nube</span>
               )}
             </button>
 
             {isOnline ? (
-              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium text-fey-graphite border border-[#222222]">
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-full text-xs font-medium text-fey-graphite border border-[#222222]">
                 <Wifi className="w-3.5 h-3.5 text-fey-growth" />
-                <span className="hidden sm:inline text-white">Online</span>
+                <span className="hidden md:inline text-white">Online</span>
               </span>
             ) : (
-              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium text-fey-ember bg-fey-ember/10 border border-fey-ember/30">
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-full text-xs font-medium text-fey-ember bg-fey-ember/10 border border-fey-ember/30">
                 <WifiOff className="w-3.5 h-3.5" />
-                <span>Offline</span>
+                <span className="hidden sm:inline">Offline</span>
               </span>
             )}
           </div>
         </div>
       </header>
 
-      {/* Contenido Principal */}
-      <main className="flex-1 max-w-6xl w-full mx-auto p-4 sm:p-6 space-y-6">
+      {/* Contenido Principal con padding inferior seguro para móvil */}
+      <main className="flex-1 max-w-6xl w-full mx-auto p-3.5 sm:p-6 space-y-6 pb-24 md:pb-8 relative z-10">
         {/* Encabezado con Métricas Financieras */}
         <SummaryHeader
           totalRealBalance={totalRealBalance}
@@ -209,8 +218,9 @@ export const App: React.FC = () => {
           }}
         />
 
-        {/* Pestañas de Navegación Fey (Pills con acento Fey Signal) */}
-        <nav className="flex items-center gap-1.5 sm:gap-2 border-b border-[#1f1f1f] pb-2 overflow-x-auto">
+        {/* Pestañas de Navegación Fey (Pills táctiles con swipe horizontal suave) */}
+        <div className="relative">
+          <nav className="flex items-center gap-1.5 sm:gap-2 border-b border-[#1f1f1f] pb-2 overflow-x-auto no-scrollbar scroll-smooth">
           <button
             onClick={() => setActiveTab('dashboard')}
             className={`inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition ${
@@ -307,6 +317,7 @@ export const App: React.FC = () => {
             Plan Semanal
           </button>
         </nav>
+        </div>
 
         {/* Vista 1: Dashboard Principal */}
         {activeTab === 'dashboard' && (
@@ -435,8 +446,60 @@ export const App: React.FC = () => {
         outboxItems={outboxItems}
       />
 
+      {/* Barra de Navegación Flotante Móvil (Mobile Dock) */}
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#0c0c0c]/90 backdrop-blur-xl border-t border-[#1f1f1f] pb-safe px-2 py-1.5 flex items-center justify-around shadow-fey-modal">
+        <button
+          onClick={() => setActiveTab('dashboard')}
+          className={`flex flex-col items-center gap-1 py-1 px-2.5 rounded-xl transition ${
+            activeTab === 'dashboard' ? 'text-white' : 'text-fey-graphite'
+          }`}
+        >
+          <LayoutDashboard className="w-4 h-4" />
+          <span className="text-[9px] font-medium">Inicio</span>
+        </button>
+
+        <button
+          onClick={() => setActiveTab('reserves')}
+          className={`flex flex-col items-center gap-1 py-1 px-2.5 rounded-xl transition ${
+            activeTab === 'reserves' ? 'text-fey-growth' : 'text-fey-graphite'
+          }`}
+        >
+          <Layers className="w-4 h-4" />
+          <span className="text-[9px] font-medium">Reservas</span>
+        </button>
+
+        {/* Botón Central Acción Rápida */}
+        <button
+          onClick={() => setIsDailyIncomeModalOpen(true)}
+          className="flex flex-col items-center justify-center w-10 h-10 -mt-3 rounded-full bg-white text-black shadow-fey-button active:scale-95 transition"
+          title="Registrar cobro"
+        >
+          <Coins className="w-5 h-5 text-black" />
+        </button>
+
+        <button
+          onClick={() => setActiveTab('debts')}
+          className={`flex flex-col items-center gap-1 py-1 px-2.5 rounded-xl transition ${
+            activeTab === 'debts' ? 'text-fey-ember' : 'text-fey-graphite'
+          }`}
+        >
+          <ShieldAlert className="w-4 h-4" />
+          <span className="text-[9px] font-medium">Deudas</span>
+        </button>
+
+        <button
+          onClick={() => setActiveTab('analytics')}
+          className={`flex flex-col items-center gap-1 py-1 px-2.5 rounded-xl transition ${
+            activeTab === 'analytics' ? 'text-fey-signal' : 'text-fey-graphite'
+          }`}
+        >
+          <BarChart3 className="w-4 h-4" />
+          <span className="text-[9px] font-medium">Gráficos</span>
+        </button>
+      </nav>
+
       {/* Pie de Página */}
-      <footer className="border-t border-[#1f1f1f] py-5 px-4 text-center text-xs text-fey-graphite">
+      <footer className="border-t border-[#1f1f1f] py-5 px-4 text-center text-xs text-fey-graphite pb-24 md:pb-5">
         Terminal Financiera Personal • Estética Nocturna Fey • Módulo 9: Sincronización Segura Supabase & Outbox Offline-First
       </footer>
     </div>

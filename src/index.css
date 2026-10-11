@@ -29,7 +29,16 @@
   transform: translateY(-1px);
 }
 
-/* Scrollbar minimalista Fey */
+/* Ocultar barra de desplazamiento en móvil manteniendo el scroll táctil */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Scrollbar minimalista Fey para desktop */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
@@ -48,3 +57,66 @@
 ::-webkit-scrollbar-thumb:hover {
   background: #525252;
 }
+
+/* Efectos de fondo ambiental luminoso */
+.fey-ambient-canvas {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.fey-orb-ember {
+  position: absolute;
+  top: -10%;
+  left: 15%;
+  width: 550px;
+  height: 550px;
+  border-radius: 9999px;
+  background: radial-gradient(circle, rgba(255, 161, 108, 0.07) 0%, rgba(85, 27, 16, 0.03) 50%, transparent 75%);
+  filter: blur(80px);
+  pointer-events: none;
+}
+
+.fey-orb-signal {
+  position: absolute;
+  top: 25%;
+  right: -5%;
+  width: 600px;
+  height: 600px;
+  border-radius: 9999px;
+  background: radial-gradient(circle, rgba(71, 159, 250, 0.06) 0%, rgba(15, 35, 75, 0.02) 50%, transparent 75%);
+  filter: blur(90px);
+  pointer-events: none;
+}
+
+.fey-orb-growth {
+  position: absolute;
+  bottom: 5%;
+  left: 5%;
+  width: 500px;
+  height: 500px;
+  border-radius: 9999px;
+  background: radial-gradient(circle, rgba(78, 190, 150, 0.05) 0%, rgba(20, 55, 40, 0.02) 50%, transparent 75%);
+  filter: blur(85px);
+  pointer-events: none;
+}
+
+/* Grilla sutil de terminal */
+.fey-grid-overlay {
+  position: fixed;
+  inset: 0;
+  background-size: 40px 40px;
+  background-image: 
+    linear-gradient(to right, rgba(255, 255, 255, 0.015) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.015) 1px, transparent 1px);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Soporte para safe area en dispositivos móviles (notches y barras inferiores) */
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom, 1rem);
+}
+

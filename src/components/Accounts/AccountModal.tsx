@@ -50,49 +50,49 @@ export const AccountModal: React.FC<AccountModalProps> = ({
 
       onClose();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Error al guardar la cuenta');
+      setError(err instanceof Error ? err.message : 'Error al guardar la cuenta.');
     } finally {
       setIsSubmitting(false);
     }
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm">
-      <div className="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-md p-6 shadow-2xl relative">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/80 backdrop-blur-sm overflow-y-auto">
+      <div className="bg-[#141414] border border-[#282828] rounded-2xl w-full max-w-md p-5 sm:p-6 shadow-fey-modal relative my-auto max-h-[92vh] overflow-y-auto animate-in fade-in duration-200">
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800 transition"
+          className="absolute top-4 right-4 text-fey-graphite hover:text-white p-1 rounded-full hover:bg-[#222222] transition"
         >
           <X className="w-5 h-5" />
         </button>
 
-        <h3 className="text-lg font-bold text-white mb-4">
+        <h3 className="text-lg font-bold tracking-fey-heading text-white mb-4">
           {accountToEdit ? 'Editar Cuenta' : 'Nueva Cuenta Financiera'}
         </h3>
 
         {error && (
-          <div className="mb-4 p-3 bg-red-500/10 border border-red-500/20 rounded-xl text-red-400 text-sm">
+          <div className="mb-4 p-3 bg-[#241414] border border-[#441a1a] rounded-xl text-red-300 text-xs">
             {error}
           </div>
         )}
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1.5">
-              Nombre de la cuenta
+            <label className="block text-xs font-semibold text-fey-mist uppercase tracking-wider mb-1.5">
+              Nombre de la cuenta *
             </label>
             <input
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="Ej: Mercado Pago, Banco Galicia, Efectivo"
-              className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500"
+              className="w-full bg-[#0b0b0b] border border-[#282828] rounded-xl px-3.5 py-2.5 text-xs text-white placeholder-fey-graphite focus:outline-none focus:border-fey-growth transition"
               required
             />
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1.5">
+            <label className="block text-xs font-semibold text-fey-mist uppercase tracking-wider mb-1.5">
               Tipo de cuenta
             </label>
             <div className="grid grid-cols-3 gap-2">
@@ -101,11 +101,11 @@ export const AccountModal: React.FC<AccountModalProps> = ({
                 onClick={() => setType('wallet')}
                 className={`flex flex-col items-center justify-center p-3 rounded-xl border text-xs font-medium transition ${
                   type === 'wallet'
-                    ? 'bg-emerald-500/10 border-emerald-500 text-emerald-400'
-                    : 'bg-slate-950 border-slate-800 text-slate-400 hover:border-slate-700'
+                    ? 'bg-[#152336] border-[#23426e] text-fey-signal font-bold'
+                    : 'bg-[#0b0b0b] border-[#242424] text-fey-graphite hover:border-[#383838]'
                 }`}
               >
-                <Wallet className="w-5 h-5 mb-1" />
+                <Wallet className="w-4 h-4 mb-1" />
                 Billetera
               </button>
 
@@ -114,11 +114,11 @@ export const AccountModal: React.FC<AccountModalProps> = ({
                 onClick={() => setType('bank')}
                 className={`flex flex-col items-center justify-center p-3 rounded-xl border text-xs font-medium transition ${
                   type === 'bank'
-                    ? 'bg-emerald-500/10 border-emerald-500 text-emerald-400'
-                    : 'bg-slate-950 border-slate-800 text-slate-400 hover:border-slate-700'
+                    ? 'bg-[#1b2535] border-[#2b3c59] text-blue-400 font-bold'
+                    : 'bg-[#0b0b0b] border-[#242424] text-fey-graphite hover:border-[#383838]'
                 }`}
               >
-                <Landmark className="w-5 h-5 mb-1" />
+                <Landmark className="w-4 h-4 mb-1" />
                 Banco
               </button>
 
@@ -127,11 +127,11 @@ export const AccountModal: React.FC<AccountModalProps> = ({
                 onClick={() => setType('cash')}
                 className={`flex flex-col items-center justify-center p-3 rounded-xl border text-xs font-medium transition ${
                   type === 'cash'
-                    ? 'bg-emerald-500/10 border-emerald-500 text-emerald-400'
-                    : 'bg-slate-950 border-slate-800 text-slate-400 hover:border-slate-700'
+                    ? 'bg-[#1b2a22] border-[#2b4c38] text-fey-growth font-bold'
+                    : 'bg-[#0b0b0b] border-[#242424] text-fey-graphite hover:border-[#383838]'
                 }`}
               >
-                <Banknote className="w-5 h-5 mb-1" />
+                <Banknote className="w-4 h-4 mb-1" />
                 Efectivo
               </button>
             </div>
@@ -139,36 +139,39 @@ export const AccountModal: React.FC<AccountModalProps> = ({
 
           {!accountToEdit && (
             <div>
-              <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1.5">
+              <label className="block text-xs font-semibold text-fey-mist uppercase tracking-wider mb-1.5">
                 Saldo Inicial en Pesos (ARS)
               </label>
-              <input
-                type="number"
-                min="0"
-                step="1"
-                value={initialBalance || ''}
-                onChange={(e) => setInitialBalance(parseInt(e.target.value, 10) || 0)}
-                placeholder="0"
-                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-white placeholder-slate-500 font-mono focus:outline-none focus:border-emerald-500"
-              />
-              <span className="text-xs text-slate-500 mt-1 block">
+              <div className="relative">
+                <span className="absolute left-3.5 top-2.5 text-fey-graphite font-mono">$</span>
+                <input
+                  type="number"
+                  min="0"
+                  step="1"
+                  value={initialBalance || ''}
+                  onChange={(e) => setInitialBalance(parseInt(e.target.value, 10) || 0)}
+                  placeholder="0"
+                  className="w-full bg-[#0b0b0b] border border-[#282828] rounded-xl pl-8 pr-3.5 py-2.5 text-xs text-white placeholder-fey-graphite font-mono focus:outline-none focus:border-fey-growth transition"
+                />
+              </div>
+              <span className="text-[11px] font-mono text-fey-graphite mt-1 block">
                 Equivalente: {formatPesos(initialBalance || 0)}
               </span>
             </div>
           )}
 
-          <div className="flex items-center justify-end gap-3 pt-2">
+          <div className="flex items-center justify-end gap-2.5 pt-2 border-t border-[#222222]">
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 rounded-xl text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-white transition"
+              className="px-4 py-2 rounded-full text-xs font-semibold text-fey-graphite hover:text-white transition"
             >
               Cancelar
             </button>
             <button
               type="submit"
               disabled={isSubmitting}
-              className="px-5 py-2 rounded-xl text-sm font-bold bg-emerald-500 hover:bg-emerald-600 text-slate-950 transition shadow-lg shadow-emerald-500/20 disabled:opacity-50"
+              className="px-5 py-2 rounded-full text-xs font-bold bg-white text-black hover:bg-fey-pale transition shadow-fey-button disabled:opacity-50"
             >
               {isSubmitting ? 'Guardando...' : accountToEdit ? 'Actualizar' : 'Crear Cuenta'}
             </button>

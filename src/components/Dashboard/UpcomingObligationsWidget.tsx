@@ -63,58 +63,58 @@ export const UpcomingObligationsWidget: React.FC<UpcomingObligationsWidgetProps>
   const getDueBadge = (days: number) => {
     if (days < 0) {
       return (
-        <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-md bg-red-500/20 text-red-400 border border-red-500/30">
-          Vencida hace {Math.abs(days)}d
+        <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-red-500/20 text-red-400 border border-red-500/30">
+          Vencida ({Math.abs(days)}d)
         </span>
       );
     }
     if (days === 0) {
       return (
-        <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-md bg-red-500/20 text-red-400 border border-red-500/30">
+        <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-red-500/20 text-red-400 border border-red-500/30">
           Vence Hoy
         </span>
       );
     }
     if (days <= 3) {
       return (
-        <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md bg-amber-500/20 text-amber-400 border border-amber-500/30">
+        <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-fey-ember/20 text-fey-ember border border-fey-ember/40 shadow-fey-ember-glow">
           Vence en {days}d
         </span>
       );
     }
     return (
-      <span className="text-[10px] font-medium px-2 py-0.5 rounded-md bg-slate-800 text-slate-300">
+      <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-[#0b0b0b] text-fey-graphite border border-[#222222]">
         En {days} días
       </span>
     );
   };
 
   return (
-    <div className="bg-slate-900 border border-slate-800 rounded-3xl p-5 shadow-xl space-y-4">
-      <div className="flex items-center justify-between">
+    <div className="bg-[#191919] border border-[#262626] rounded-2xl p-5 sm:p-6 shadow-fey-card relative overflow-hidden space-y-4 fey-halo-hover">
+      <div className="flex items-center justify-between pb-3 border-b border-[#262626]">
         <div>
-          <h3 className="text-base font-bold text-white flex items-center gap-2">
-            <Calendar className="w-4 h-4 text-emerald-400" />
+          <h3 className="text-base font-bold tracking-fey-heading text-white flex items-center gap-2">
+            <Calendar className="w-4 h-4 text-fey-signal" />
             Próximos Vencimientos
           </h3>
-          <p className="text-xs text-slate-400">
+          <p className="text-xs text-fey-graphite">
             Obligaciones ordenadas por inminencia temporal
           </p>
         </div>
 
-        <span className="text-xs text-slate-400 font-mono">
+        <span className="text-[11px] text-fey-graphite font-mono bg-[#0b0b0b] px-2.5 py-1 rounded-full border border-[#222222]">
           {allItems.length} pendiente(s)
         </span>
       </div>
 
       {allItems.length === 0 ? (
-        <div className="p-6 text-center bg-slate-950/40 rounded-2xl border border-slate-800/80">
-          <CheckCircle className="w-8 h-8 text-emerald-400 mx-auto mb-2 opacity-80" />
-          <p className="text-xs text-slate-300 font-medium">No tenés vencimientos pendientes cargados.</p>
-          <p className="text-[11px] text-slate-500 mt-0.5">Podés agregar deudas o gastos fijos en los siguientes módulos.</p>
+        <div className="p-6 text-center bg-[#131313] rounded-xl border border-[#222222]">
+          <CheckCircle className="w-8 h-8 text-fey-growth mx-auto mb-2 opacity-80" />
+          <p className="text-xs text-fey-mist font-medium">No tenés vencimientos pendientes cargados.</p>
+          <p className="text-[11px] text-fey-graphite mt-0.5">Podés agregar deudas o gastos fijos en los módulos correspondientes.</p>
         </div>
       ) : (
-        <div className="divide-y divide-slate-800/80 max-h-[280px] overflow-y-auto pr-1">
+        <div className="divide-y divide-[#222222] max-h-[280px] overflow-y-auto pr-1">
           {allItems.slice(0, 5).map((item) => (
             <div
               key={item.id}
@@ -126,17 +126,17 @@ export const UpcomingObligationsWidget: React.FC<UpcomingObligationsWidgetProps>
                   {getDueBadge(item.days)}
                 </div>
 
-                <div className="flex items-center gap-2 text-xs text-slate-400">
+                <div className="flex items-center gap-2 text-xs text-fey-graphite">
                   <span>{item.type === 'debt' ? 'Deuda' : 'Gasto Fijo'}</span>
                   <span>•</span>
                   {item.isReserved ? (
-                    <span className="text-emerald-400 font-semibold flex items-center gap-1">
-                      <ShieldAlert className="w-3 h-3" />
+                    <span className="text-fey-growth font-medium flex items-center gap-1">
+                      <ShieldAlert className="w-3.5 h-3.5" />
                       Fondos Reservados
                     </span>
                   ) : (
-                    <span className="text-amber-400/90 font-medium flex items-center gap-1">
-                      <AlertTriangle className="w-3 h-3" />
+                    <span className="text-fey-ember font-medium flex items-center gap-1">
+                      <AlertTriangle className="w-3.5 h-3.5" />
                       Sin Financiar
                     </span>
                   )}
@@ -147,7 +147,7 @@ export const UpcomingObligationsWidget: React.FC<UpcomingObligationsWidgetProps>
                 <span className="text-sm font-mono font-bold text-white block">
                   {formatPesos(item.amount)}
                 </span>
-                <span className="text-[10px] text-slate-500">{item.dueDate}</span>
+                <span className="text-[10px] text-fey-graphite">{item.dueDate}</span>
               </div>
             </div>
           ))}

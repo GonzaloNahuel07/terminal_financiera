@@ -37,6 +37,32 @@ export default {
         'fey-card': '16px',
         'fey-pill': '99px',
         'fey-featured': '275px',
+      },
+      keyframes: {
+        'float-slow': {
+          '0%, 100%': { transform: 'translate(0px, 0px) scale(1)' },
+          '33%': { transform: 'translate(30px, -40px) scale(1.08)' },
+          '66%': { transform: 'translate(-25px, 20px) scale(0.95)' },
+        },
+        'float-delayed': {
+          '0%, 100%': { transform: 'translate(0px, 0px) scale(1)' },
+          '33%': { transform: 'translate(-35px, 30px) scale(1.05)' },
+          '66%': { transform: 'translate(20px, -35px) scale(0.92)' },
+        },
+        'pulse-glow': {
+          '0%, 100%': { opacity: '0.22', transform: 'scale(1)' },
+          '50%': { opacity: '0.45', transform: 'scale(1.12)' },
+        },
+        'shimmer': {
+          '0%': { backgroundPosition: '-200% 0' },
+          '100%': { backgroundPosition: '200% 0' },
+        }
+      },
+      animation: {
+        'float-slow': 'float-slow 22s ease-in-out infinite',
+        'float-delayed': 'float-delayed 28s ease-in-out infinite',
+        'pulse-glow': 'pulse-glow 14s ease-in-out infinite',
+        'shimmer': 'shimmer 8s linear infinite',
       }
     },
   },
