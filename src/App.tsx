@@ -132,32 +132,34 @@ export const App: React.FC = () => {
   );
 
   return (
-    <div className="min-h-screen bg-[#0b0b0b] text-white flex flex-col font-sans selection:bg-white selection:text-black relative">
-      {/* Fondo Ambiental Animado Nocturno */}
+    <div className="min-h-screen bg-[#08090c] text-white flex flex-col font-sans selection:bg-spider-crimson selection:text-white relative">
+      {/* Fondo Ambiental Animado Nocturno (Spider-Man Crimson/Cobalt + Batman Wayne Gold) */}
       <div className="fey-ambient-canvas" aria-hidden="true">
-        <div className="fey-orb-ember animate-float-slow" />
+        <div className="fey-orb-spider animate-float-slow" />
         <div className="fey-orb-signal animate-float-delayed" />
-        <div className="fey-orb-growth animate-pulse-glow" />
+        <div className="fey-orb-batman animate-pulse-glow" />
       </div>
       <div className="fey-grid-overlay" aria-hidden="true" />
 
-      {/* Barra de Navegación Superior Estilo Fey */}
-      <header className="border-b border-[#1f1f1f] bg-[#0b0b0b]/90 backdrop-blur-md sticky top-0 z-40 px-3 py-2.5 sm:px-6 sm:py-3 relative">
+      {/* Barra de Navegación Superior - Gotham Wayne Tech x Spider Web Aesthetic */}
+      <header className="border-b border-[#1a1e28] bg-[#08090c]/90 backdrop-blur-md sticky top-0 z-40 px-3 py-2.5 sm:px-6 sm:py-3 relative">
         <div className="max-w-6xl mx-auto flex items-center justify-between gap-2">
           <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
-            <div className="p-1.5 sm:p-2 rounded-xl bg-[#191919] border border-[#2a2a2a] text-white shadow-fey-button shrink-0">
-              <Wallet className="w-4 h-4 text-fey-mist" />
+            <div className="p-1.5 sm:p-2 rounded-xl bg-[#141722] border border-[#262d3a] text-white shadow-fey-button shrink-0 relative group">
+              <div className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-spider-crimson shadow-fey-spider-glow border border-[#08090c]" />
+              <Wallet className="w-4 h-4 text-spider-electric" />
             </div>
             <div className="min-w-0">
               <div className="flex items-center gap-2">
                 <h1 className="text-xs sm:text-base font-bold tracking-fey-heading text-white leading-tight truncate">
                   Terminal Financiera
                 </h1>
-                <span className="hidden sm:inline-block text-[10px] uppercase font-bold tracking-widest text-fey-graphite px-2 py-0.5 rounded-full border border-[#222222]">
-                  ARS • Calibre
+                <span className="hidden sm:inline-flex items-center gap-1 text-[10px] uppercase font-bold tracking-widest text-batman-gold px-2 py-0.5 rounded-full border border-batman-gold/30 bg-batman-gold/10">
+                  <span className="w-1.5 h-1.5 rounded-full bg-batman-gold animate-pulse" />
+                  WAYNE TECH × WEB HUD
                 </span>
               </div>
-              <p className="text-[10px] sm:text-[11px] text-fey-graphite truncate">Liquidez y Control Inteligente</p>
+              <p className="text-[10px] sm:text-[11px] text-fey-graphite truncate">Nocturnal High Precision • ARS</p>
             </div>
           </div>
 
@@ -165,7 +167,7 @@ export const App: React.FC = () => {
           <div className="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
             <button
               onClick={() => setIsDailyIncomeModalOpen(true)}
-              className="inline-flex items-center gap-1 sm:gap-1.5 px-3 py-1.5 rounded-full bg-white text-black hover:bg-fey-pale font-bold text-xs transition shadow-fey-button active:scale-95 touch-manipulation"
+              className="inline-flex items-center gap-1 sm:gap-1.5 px-3 py-1.5 rounded-full bg-white text-black hover:bg-spider-crimson hover:text-white font-bold text-xs transition-all shadow-fey-button hover:shadow-fey-spider-glow active:scale-95 touch-manipulation"
             >
               <Coins className="w-3.5 h-3.5" />
               <span className="hidden xs:inline">+ Cobro</span>
@@ -177,12 +179,12 @@ export const App: React.FC = () => {
               onClick={() => setIsSyncModalOpen(true)}
               className={`inline-flex items-center gap-1 sm:gap-1.5 px-2.5 py-1.5 rounded-full text-xs font-semibold transition border touch-manipulation ${
                 pendingSyncCount > 0
-                  ? 'bg-[#201411] text-fey-ember border-[#482218] hover:bg-[#2c1a16]'
-                  : 'bg-[#141414] text-fey-mist border-[#242424] hover:text-white hover:border-[#383838]'
+                  ? 'bg-[#201411] text-spider-crimson border-spider-crimson/40 hover:bg-[#2c1a16]'
+                  : 'bg-[#141722] text-fey-mist border-[#242b38] hover:text-white hover:border-[#38bdf8]/40'
               }`}
               title="Abrir estado de sincronización y configuración de Supabase"
             >
-              <Cloud className="w-3.5 h-3.5 text-fey-signal" />
+              <Cloud className="w-3.5 h-3.5 text-spider-electric" />
               {pendingSyncCount > 0 ? (
                 <span>{pendingSyncCount}</span>
               ) : (
@@ -191,12 +193,12 @@ export const App: React.FC = () => {
             </button>
 
             {isOnline ? (
-              <span className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-full text-xs font-medium text-fey-graphite border border-[#222222]">
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-full text-xs font-medium text-fey-graphite border border-[#242b38]">
                 <Wifi className="w-3.5 h-3.5 text-fey-growth" />
                 <span className="hidden md:inline text-white">Online</span>
               </span>
             ) : (
-              <span className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-full text-xs font-medium text-fey-ember bg-fey-ember/10 border border-fey-ember/30">
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-full text-xs font-medium text-spider-crimson bg-spider-crimson/10 border border-spider-crimson/30">
                 <WifiOff className="w-3.5 h-3.5" />
                 <span className="hidden sm:inline">Offline</span>
               </span>
@@ -446,61 +448,61 @@ export const App: React.FC = () => {
         outboxItems={outboxItems}
       />
 
-      {/* Barra de Navegación Flotante Móvil (Mobile Dock) */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#0c0c0c]/90 backdrop-blur-xl border-t border-[#1f1f1f] pb-safe px-2 py-1.5 flex items-center justify-around shadow-fey-modal">
+      {/* Barra de Navegación Flotante Móvil (Mobile Dock - Gotham & Spider Web) */}
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#08090c]/90 backdrop-blur-xl border-t border-[#1a1e28] pb-safe px-2 py-1.5 flex items-center justify-around shadow-fey-modal">
         <button
           onClick={() => setActiveTab('dashboard')}
           className={`flex flex-col items-center gap-1 py-1 px-2.5 rounded-xl transition ${
-            activeTab === 'dashboard' ? 'text-white' : 'text-fey-graphite'
+            activeTab === 'dashboard' ? 'text-spider-electric font-semibold' : 'text-fey-graphite'
           }`}
         >
           <LayoutDashboard className="w-4 h-4" />
-          <span className="text-[9px] font-medium">Inicio</span>
+          <span className="text-[9px]">Inicio</span>
         </button>
 
         <button
           onClick={() => setActiveTab('reserves')}
           className={`flex flex-col items-center gap-1 py-1 px-2.5 rounded-xl transition ${
-            activeTab === 'reserves' ? 'text-fey-growth' : 'text-fey-graphite'
+            activeTab === 'reserves' ? 'text-fey-growth font-semibold' : 'text-fey-graphite'
           }`}
         >
           <Layers className="w-4 h-4" />
-          <span className="text-[9px] font-medium">Reservas</span>
+          <span className="text-[9px]">Reservas</span>
         </button>
 
-        {/* Botón Central Acción Rápida */}
+        {/* Botón Central Acción Rápida - Spider Slinger High Contrast Action */}
         <button
           onClick={() => setIsDailyIncomeModalOpen(true)}
-          className="flex flex-col items-center justify-center w-10 h-10 -mt-3 rounded-full bg-white text-black shadow-fey-button active:scale-95 transition"
+          className="flex flex-col items-center justify-center w-11 h-11 -mt-3.5 rounded-full bg-white text-black hover:bg-spider-crimson hover:text-white shadow-fey-button hover:shadow-fey-spider-glow border border-white/20 active:scale-95 transition-all"
           title="Registrar cobro"
         >
-          <Coins className="w-5 h-5 text-black" />
+          <Coins className="w-5 h-5" />
         </button>
 
         <button
           onClick={() => setActiveTab('debts')}
           className={`flex flex-col items-center gap-1 py-1 px-2.5 rounded-xl transition ${
-            activeTab === 'debts' ? 'text-fey-ember' : 'text-fey-graphite'
+            activeTab === 'debts' ? 'text-spider-crimson font-semibold' : 'text-fey-graphite'
           }`}
         >
           <ShieldAlert className="w-4 h-4" />
-          <span className="text-[9px] font-medium">Deudas</span>
+          <span className="text-[9px]">Deudas</span>
         </button>
 
         <button
           onClick={() => setActiveTab('analytics')}
           className={`flex flex-col items-center gap-1 py-1 px-2.5 rounded-xl transition ${
-            activeTab === 'analytics' ? 'text-fey-signal' : 'text-fey-graphite'
+            activeTab === 'analytics' ? 'text-batman-gold font-semibold' : 'text-fey-graphite'
           }`}
         >
           <BarChart3 className="w-4 h-4" />
-          <span className="text-[9px] font-medium">Gráficos</span>
+          <span className="text-[9px]">Gráficos</span>
         </button>
       </nav>
 
       {/* Pie de Página */}
-      <footer className="border-t border-[#1f1f1f] py-5 px-4 text-center text-xs text-fey-graphite pb-24 md:pb-5">
-        Terminal Financiera Personal • Estética Nocturna Fey • Módulo 9: Sincronización Segura Supabase & Outbox Offline-First
+      <footer className="border-t border-[#1a1e28] py-5 px-4 text-center text-xs text-fey-graphite pb-24 md:pb-5">
+        Terminal Financiera Personal • Gotham Tech & Spider Web Edition • Sistema de Finanzas Personales ARS
       </footer>
     </div>
   );

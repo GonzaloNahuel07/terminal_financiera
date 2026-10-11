@@ -47,7 +47,7 @@ export const AssistantRecommendations: React.FC<AssistantRecommendationsProps> =
       {/* Encabezado Fey con estado del Asistente */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#262626] pb-3">
         <div className="flex items-center gap-2.5">
-          <div className="p-2 rounded-full bg-[#131313] border border-[#2a2a2a] text-fey-ember shadow-fey-button">
+          <div className="p-2 rounded-full bg-[#13161f] border border-batman-gold/30 text-batman-gold shadow-fey-batman-glow">
             <Sparkles className="w-4 h-4" />
           </div>
           <div>
