@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { X, RefreshCw } from 'lucide-react';
 import type { RecurringObligation, RecurringFrequency } from '../../types';
 import { createRecurringTemplate, updateRecurringTemplate } from '../../services/recurringService';
@@ -22,6 +22,24 @@ export const RecurringModal: React.FC<RecurringModalProps> = ({
   const [priority, setPriority] = useState<1 | 2 | 3 | 4 | 5>(templateToEdit?.priority ?? 1);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Sincronizar y recordar datos cuando se edita un gasto recurrente
+  useEffect(() => {
+    if (templateToEdit) {
+      setName(templateToEdit.name);
+      setExpectedAmount(templateToEdit.expectedAmount);
+      setFrequency(templateToEdit.frequency);
+      setDueDay(templateToEdit.dueDay);
+      setPriority(templateToEdit.priority);
+    } else {
+      setName('');
+      setExpectedAmount(0);
+      setFrequency('monthly');
+      setDueDay(10);
+      setPriority(1);
+    }
+    setError(null);
+  }, [templateToEdit, isOpen]);
 
   if (!isOpen) return null;
 

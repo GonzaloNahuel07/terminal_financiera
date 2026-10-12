@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { X, ShieldAlert, Sparkles, AlertCircle } from 'lucide-react';
 import type {
   Debt,
@@ -94,6 +94,18 @@ export const AllocateReserveModal: React.FC<AllocateReserveModalProps> = ({
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Sincronizar y recordar datos cuando se edita una reserva
+  useEffect(() => {
+    if (reserveToEdit) {
+      setSelectedTargetId(reserveToEdit.targetId);
+      setAmount(reserveToEdit.amountReserved);
+    } else {
+      setSelectedTargetId(defaultTarget?.id ?? '');
+      setAmount(Math.min(defaultTarget?.totalNeeded ?? 0, maxAvailableForThis));
+    }
+    setError(null);
+  }, [reserveToEdit, isOpen]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

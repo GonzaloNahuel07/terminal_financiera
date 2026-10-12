@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { X, ShieldAlert } from 'lucide-react';
 import type { Debt, DebtConsequence } from '../../types';
 import { createDebt, updateDebt } from '../../services/debtService';
@@ -26,6 +26,30 @@ export const DebtModal: React.FC<DebtModalProps> = ({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  // Sincronizar y recordar todos los datos existentes al abrir en modo edición
+  useEffect(() => {
+    if (debtToEdit) {
+      setName(debtToEdit.name);
+      setCreditor(debtToEdit.creditor);
+      setTotalAmount(debtToEdit.totalAmount);
+      setMinimumPayment(debtToEdit.minimumPayment ?? 0);
+      setDueDate(debtToEdit.dueDate);
+      setConsequenceType(debtToEdit.consequenceType);
+      setInterestRateKnown(debtToEdit.interestRateKnown ?? '');
+      setNotes(debtToEdit.notes ?? '');
+    } else {
+      setName('');
+      setCreditor('');
+      setTotalAmount(0);
+      setMinimumPayment(0);
+      setDueDate(new Date().toISOString().split('T')[0]);
+      setConsequenceType('punitive_interest');
+      setInterestRateKnown('');
+      setNotes('');
+    }
+    setError(null);
+  }, [debtToEdit, isOpen]);
+
   if (!isOpen) return null;
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -47,6 +71,7 @@ export const DebtModal: React.FC<DebtModalProps> = ({
         await updateDebt(debtToEdit.id, {
           name: name.trim(),
           creditor: creditor.trim(),
+          totalAmount: Math.round(totalAmount),
           dueDate,
           minimumPayment: minimumPayment > 0 ? Math.round(minimumPayment) : undefined,
           consequenceType,
@@ -170,14 +195,18 @@ export const DebtModal: React.FC<DebtModalProps> = ({
                 min="1"
                 step="1"
                 required
-                disabled={Boolean(debtToEdit)}
                 value={totalAmount || ''}
                 onChange={(e) => setTotalAmount(parseInt(e.target.value, 10) || 0)}
                 placeholder="0"
-                className="w-full bg-[#0b0b0b] border border-[#2a2a2a] rounded-xl px-3.5 py-2.5 text-base font-mono font-bold text-white placeholder-fey-smoke focus:outline-none focus:border-white transition disabled:opacity-60"
+                className="w-full bg-[#0b0b0b] border border-[#2a2a2a] rounded-xl px-3.5 py-2.5 text-base font-mono font-bold text-white placeholder-fey-smoke focus:outline-none focus:border-white transition"
               />
               <span className="text-[10px] text-fey-graphite mt-1 block">
                 {formatPesos(totalAmount || 0)}
+                {debtToEdit && debtToEdit.totalAmount > debtToEdit.remainingAmount && (
+                  <span className="text-amber-400 ml-1.5">
+                    (Ya abonado: {formatPesos(debtToEdit.totalAmount - debtToEdit.remainingAmount)})
+                  </span>
+                )}
               </span>
             </div>
 

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { X, Wallet, Landmark, Banknote } from 'lucide-react';
 import type { Account, AccountType } from '../../types';
 import { createAccount, updateAccount } from '../../services/accountService';
@@ -20,6 +20,20 @@ export const AccountModal: React.FC<AccountModalProps> = ({
   const [initialBalance, setInitialBalance] = useState<number>(accountToEdit?.initialBalance ?? 0);
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Sincronizar y recordar datos cuando se edita una cuenta
+  useEffect(() => {
+    if (accountToEdit) {
+      setName(accountToEdit.name);
+      setType(accountToEdit.type);
+      setInitialBalance(accountToEdit.initialBalance);
+    } else {
+      setName('');
+      setType('wallet');
+      setInitialBalance(0);
+    }
+    setError(null);
+  }, [accountToEdit, isOpen]);
 
   if (!isOpen) return null;
 

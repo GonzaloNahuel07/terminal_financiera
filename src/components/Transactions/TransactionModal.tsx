@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { X, ArrowDownRight, ArrowUpRight, ArrowLeftRight, Scale } from 'lucide-react';
 import type { Account, Transaction, TransactionType } from '../../types';
 import { createTransaction, updateTransaction } from '../../services/transactionService';
@@ -31,6 +31,35 @@ export const TransactionModal: React.FC<TransactionModalProps> = ({
   );
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Sincronizar y recordar datos cuando se edita un movimiento
+  useEffect(() => {
+    if (transactionToEdit) {
+      setType(transactionToEdit.type);
+      setAmount(transactionToEdit.amount);
+      setAccountId(transactionToEdit.accountId);
+      setDestinationAccountId(
+        transactionToEdit.destinationAccountId ??
+          (accounts.find((a) => a.id !== transactionToEdit.accountId)?.id ?? '')
+      );
+      setCategory(transactionToEdit.category);
+      setDescription(transactionToEdit.description);
+      setNotes(transactionToEdit.notes ?? '');
+      setDate(transactionToEdit.date);
+    } else {
+      setType('expense');
+      setAmount(0);
+      setAccountId(accounts[0]?.id ?? '');
+      setDestinationAccountId(
+        accounts.find((a) => a.id !== accounts[0]?.id)?.id ?? ''
+      );
+      setCategory('General');
+      setDescription('');
+      setNotes('');
+      setDate(new Date().toISOString().split('T')[0]);
+    }
+    setError(null);
+  }, [transactionToEdit, isOpen, accounts]);
 
   if (!isOpen) return null;
 

@@ -95,11 +95,11 @@ export async function createDebt(params: {
 }
 
 /**
- * Modifica datos de una deuda existente.
+ * Modifica datos de una deuda existente y recalcula su estado.
  */
 export async function updateDebt(
   id: string,
-  updates: Partial<Pick<Debt, 'name' | 'creditor' | 'dueDate' | 'minimumPayment' | 'consequenceType' | 'interestRateKnown' | 'notes'>>
+  updates: Partial<Pick<Debt, 'name' | 'creditor' | 'totalAmount' | 'dueDate' | 'minimumPayment' | 'consequenceType' | 'interestRateKnown' | 'notes'>>
 ): Promise<Debt> {
   const existing = await db.debts.get(id);
   if (!existing) {
@@ -107,9 +107,35 @@ export async function updateDebt(
   }
 
   const now = new Date().toISOString();
-  const updated: Debt = {
+  let remainingAmount = existing.remainingAmount;
+  let totalAmount = existing.totalAmount;
+
+  if (updates.totalAmount !== undefined) {
+    const validatedTotal = validateIntegerAmount(updates.totalAmount);
+    if (validatedTotal <= 0) {
+      throw new Error('El monto de la deuda debe ser mayor a 0 pesos.');
+    }
+    const alreadyPaid = existing.totalAmount - existing.remainingAmount;
+    if (validatedTotal < alreadyPaid) {
+      throw new Error(`El nuevo monto total ($${validatedTotal}) no puede ser menor a lo ya pagado ($${alreadyPaid}).`);
+    }
+    remainingAmount = validatedTotal - alreadyPaid;
+    totalAmount = validatedTotal;
+  }
+
+  const today = new Date().toISOString().split('T')[0];
+  const candidate: Debt = {
     ...existing,
     ...updates,
+    totalAmount,
+    remainingAmount
+  };
+
+  const status = evaluateDebtStatus(candidate, today);
+
+  const updated: Debt = {
+    ...candidate,
+    status,
     updatedAt: now
   };
 

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { X, CheckCircle } from 'lucide-react';
 import type { Debt, Account } from '../../types';
 import { recordDebtPayment } from '../../services/debtService';
@@ -17,14 +17,25 @@ export const DebtPaymentModal: React.FC<DebtPaymentModalProps> = ({
   debt,
   accounts
 }) => {
-  if (!isOpen || !debt) return null;
-
-  const [paymentAmount, setPaymentAmount] = useState<number>(debt.remainingAmount);
+  const [paymentAmount, setPaymentAmount] = useState<number>(debt?.remainingAmount ?? 0);
   const [accountId, setAccountId] = useState<string>(accounts[0]?.id ?? '');
   const [date, setDate] = useState<string>(new Date().toISOString().split('T')[0]);
   const [notes, setNotes] = useState<string>('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Sincronizar datos al abrir modal de pago para una deuda
+  useEffect(() => {
+    if (debt) {
+      setPaymentAmount(debt.remainingAmount);
+      setAccountId(accounts[0]?.id ?? '');
+      setDate(new Date().toISOString().split('T')[0]);
+      setNotes('');
+    }
+    setError(null);
+  }, [debt, isOpen, accounts]);
+
+  if (!isOpen || !debt) return null;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
