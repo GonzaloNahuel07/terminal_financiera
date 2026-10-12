@@ -4,6 +4,7 @@ import { validateIntegerAmount } from '../utils/money';
 import { createTransaction } from './transactionService';
 import { changeReserveStatus } from '../core/calculator';
 import { DEFAULT_USER_ID } from './accountService';
+import { scheduleBackgroundSync } from './syncService';
 
 /**
  * Obtiene todas las plantillas de gastos recurrentes activas.
@@ -57,6 +58,8 @@ export async function createRecurringTemplate(params: {
     syncStatus: 'pending'
   });
 
+  scheduleBackgroundSync();
+
   return template;
 }
 
@@ -91,6 +94,8 @@ export async function updateRecurringTemplate(
     syncStatus: 'pending'
   });
 
+  scheduleBackgroundSync();
+
   return updated;
 }
 
@@ -116,6 +121,8 @@ export async function deleteRecurringTemplate(id: string): Promise<void> {
     createdAt: now,
     syncStatus: 'pending'
   });
+
+  scheduleBackgroundSync();
 }
 
 /**

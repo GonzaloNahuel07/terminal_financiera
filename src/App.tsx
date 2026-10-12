@@ -49,10 +49,12 @@ import {
   type DueAlertItem
 } from './services/notificationService';
 import { triggerFullSync } from './services/syncService';
+import { isSupabaseConfigured } from './supabase/client';
 import type { Transaction } from './types';
 
 export const App: React.FC = () => {
   const [isOnline, setIsOnline] = useState<boolean>(navigator.onLine);
+  const [isCloudConfigured, setIsCloudConfigured] = useState<boolean>(isSupabaseConfigured());
   const [activeTab, setActiveTab] = useState<'dashboard' | 'reserves' | 'accounts' | 'debts' | 'transactions' | 'analytics' | 'savings' | 'weekly'>('dashboard');
   const [isTxModalOpen, setIsTxModalOpen] = useState(false);
   const [isDailyIncomeModalOpen, setIsDailyIncomeModalOpen] = useState(false);
@@ -62,7 +64,7 @@ export const App: React.FC = () => {
   const [dueAlerts, setDueAlerts] = useState<DueAlertItem[]>([]);
   const [txToEdit, setTxToEdit] = useState<Transaction | null>(null);
 
-  // Monitoreo de conectividad y sincronización automática
+  // Monitoreo de conectividad y sincronización automática bidireccional
   useEffect(() => {
     const handleOnline = () => {
       setIsOnline(true);
@@ -70,13 +72,27 @@ export const App: React.FC = () => {
     };
     const handleOffline = () => setIsOnline(false);
 
+    const handleVisibility = () => {
+      if (document.visibilityState === 'visible' && navigator.onLine) {
+        triggerFullSync();
+      }
+    };
+
+    const handleFocus = () => {
+      if (navigator.onLine) {
+        triggerFullSync();
+      }
+    };
+
     window.addEventListener('online', handleOnline);
     window.addEventListener('offline', handleOffline);
+    document.addEventListener('visibilitychange', handleVisibility);
+    window.addEventListener('focus', handleFocus);
 
     // Inicializar cuentas por defecto si está vacío
     initializeDefaultAccountsIfNeeded();
 
-    // Sincronización inicial y periódica cada 60s si está online
+    // Sincronización inicial y periódica cada 20s si está online
     if (navigator.onLine) {
       triggerFullSync();
     }
@@ -84,11 +100,13 @@ export const App: React.FC = () => {
       if (navigator.onLine) {
         triggerFullSync();
       }
-    }, 60000);
+    }, 20000);
 
     return () => {
       window.removeEventListener('online', handleOnline);
       window.removeEventListener('offline', handleOffline);
+      document.removeEventListener('visibilitychange', handleVisibility);
+      window.removeEventListener('focus', handleFocus);
       clearInterval(syncInterval);
     };
   }, []);
@@ -271,14 +289,30 @@ export const App: React.FC = () => {
             <button
               onClick={() => setIsSyncModalOpen(true)}
               className={`inline-flex items-center gap-1 sm:gap-1.5 px-2.5 py-1.5 rounded-full text-xs font-semibold transition border touch-manipulation ${
-                pendingSyncCount > 0
+                !isCloudConfigured
+                  ? 'bg-amber-950/40 text-batman-gold border-batman-gold/50 hover:bg-amber-950/60 shadow-fey-button'
+                  : pendingSyncCount > 0
                   ? 'bg-[#201411] text-spider-crimson border-spider-crimson/40 hover:bg-[#2c1a16]'
                   : 'bg-[#141722] text-fey-mist border-[#242b38] hover:text-white hover:border-[#38bdf8]/40'
               }`}
-              title="Abrir estado de sincronización y configuración de Supabase"
+              title={
+                !isCloudConfigured
+                  ? 'Supabase sin vincular: Toca para conectar con la nube'
+                  : 'Abrir estado de sincronización y configuración de Supabase'
+              }
             >
-              <Cloud className="w-3.5 h-3.5 text-spider-electric" />
-              {pendingSyncCount > 0 ? (
+              <Cloud
+                className={`w-3.5 h-3.5 ${
+                  !isCloudConfigured
+                    ? 'text-batman-gold animate-pulse'
+                    : pendingSyncCount > 0
+                    ? 'text-spider-crimson'
+                    : 'text-spider-electric'
+                }`}
+              />
+              {!isCloudConfigured ? (
+                <span className="text-[11px] font-bold text-batman-gold">Conectar Nube</span>
+              ) : pendingSyncCount > 0 ? (
                 <span>{pendingSyncCount}</span>
               ) : (
                 <span className="hidden sm:inline">Nube</span>
@@ -570,7 +604,10 @@ export const App: React.FC = () => {
 
       <SyncModal
         isOpen={isSyncModalOpen}
-        onClose={() => setIsSyncModalOpen(false)}
+        onClose={() => {
+          setIsSyncModalOpen(false);
+          setIsCloudConfigured(isSupabaseConfigured());
+        }}
         isOnline={isOnline}
         outboxItems={outboxItems}
       />

@@ -433,9 +433,9 @@ export const WeeklyPlanView: React.FC<WeeklyPlanViewProps> = ({
 
       {/* MODAL DE CIERRE DE SEMANA */}
       {isClosingModalOpen && activePlan && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-          <div className="bg-[#141414] border border-[#282828] w-full max-w-md rounded-2xl p-6 shadow-fey-modal space-y-4 animate-in fade-in duration-200">
-            <div>
+        <div className="fixed inset-0 z-50 flex items-start sm:items-center justify-center p-3 sm:p-4 bg-black/80 backdrop-blur-sm overflow-y-auto">
+          <div className="bg-[#141414] border border-[#282828] w-full max-w-md rounded-2xl p-5 sm:p-6 shadow-fey-modal relative my-auto max-h-[92dvh] flex flex-col text-white animate-in fade-in duration-200">
+            <div className="flex-shrink-0 mb-3">
               <span className="text-[10px] font-bold text-fey-graphite uppercase tracking-wider block">
                 Consolidación de Ciclo
               </span>
@@ -447,55 +447,57 @@ export const WeeklyPlanView: React.FC<WeeklyPlanViewProps> = ({
               </p>
             </div>
 
-            <div className="p-3 bg-[#0b0b0b] rounded-xl border border-[#242424] space-y-1.5 text-xs">
-              <div className="flex justify-between">
-                <span className="text-fey-graphite">Ingresos Cobrados:</span>
-                <span className="font-mono text-fey-growth font-bold">{formatPesos(activePlan.actualIncome)}</span>
+            <div className="flex-1 overflow-y-auto pr-1 space-y-4">
+              <div className="p-3 bg-[#0b0b0b] rounded-xl border border-[#242424] space-y-1.5 text-xs">
+                <div className="flex justify-between">
+                  <span className="text-fey-graphite">Ingresos Cobrados:</span>
+                  <span className="font-mono text-fey-growth font-bold">{formatPesos(activePlan.actualIncome)}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-fey-graphite">Obligaciones de la Semana:</span>
+                  <span className="font-mono text-fey-ember font-bold">{formatPesos(activePlan.totalObligations)}</span>
+                </div>
+                <div className="flex justify-between pt-1 border-t border-[#222222]">
+                  <span className="text-white font-medium">Balance Neto Semanal:</span>
+                  <span className="font-mono text-white font-bold">
+                    {formatPesos(activePlan.actualIncome - activePlan.totalObligations)}
+                  </span>
+                </div>
               </div>
-              <div className="flex justify-between">
-                <span className="text-fey-graphite">Obligaciones de la Semana:</span>
-                <span className="font-mono text-fey-ember font-bold">{formatPesos(activePlan.totalObligations)}</span>
-              </div>
-              <div className="flex justify-between pt-1 border-t border-[#222222]">
-                <span className="text-white font-medium">Balance Neto Semanal:</span>
-                <span className="font-mono text-white font-bold">
-                  {formatPesos(activePlan.actualIncome - activePlan.totalObligations)}
-                </span>
-              </div>
+
+              <form onSubmit={handleCloseWeekSubmit} className="space-y-4">
+                <div>
+                  <label className="block text-xs font-semibold text-fey-mist uppercase tracking-wider mb-1.5">
+                    Reflexión / Notas de Balance (Opcional)
+                  </label>
+                  <textarea
+                    rows={3}
+                    value={closingNotes}
+                    onChange={(e) => setClosingNotes(e.target.value)}
+                    placeholder="ej. Semana completada con buen ritmo de cobro freelance. El superávit se transfirió a reserva de impuestos."
+                    className="w-full bg-[#0b0b0b] border border-[#282828] rounded-xl px-3 py-2 text-xs text-white placeholder-fey-graphite focus:outline-none focus:border-fey-signal transition resize-none"
+                  />
+                </div>
+
+                <div className="flex items-center justify-end gap-2.5 pt-3 border-t border-[#222222]">
+                  <button
+                    type="button"
+                    onClick={() => setIsClosingModalOpen(false)}
+                    disabled={isClosingSubmitting}
+                    className="px-4 py-2 text-xs font-semibold text-fey-graphite hover:text-white rounded-full transition"
+                  >
+                    Cancelar
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={isClosingSubmitting}
+                    className="px-5 py-2 bg-white text-black font-bold text-xs rounded-full hover:bg-fey-pale transition shadow-fey-button disabled:opacity-50"
+                  >
+                    {isClosingSubmitting ? 'Cerrando...' : 'Confirmar Cierre de Semana'}
+                  </button>
+                </div>
+              </form>
             </div>
-
-            <form onSubmit={handleCloseWeekSubmit} className="space-y-4">
-              <div>
-                <label className="block text-xs font-semibold text-fey-mist uppercase tracking-wider mb-1.5">
-                  Reflexión / Notas de Balance (Opcional)
-                </label>
-                <textarea
-                  rows={3}
-                  value={closingNotes}
-                  onChange={(e) => setClosingNotes(e.target.value)}
-                  placeholder="ej. Semana completada con buen ritmo de cobro freelance. El superávit se transfirió a reserva de impuestos."
-                  className="w-full bg-[#0b0b0b] border border-[#282828] rounded-xl px-3 py-2 text-xs text-white placeholder-fey-graphite focus:outline-none focus:border-fey-signal transition resize-none"
-                />
-              </div>
-
-              <div className="flex items-center justify-end gap-2.5 pt-2 border-t border-[#222222]">
-                <button
-                  type="button"
-                  onClick={() => setIsClosingModalOpen(false)}
-                  disabled={isClosingSubmitting}
-                  className="px-4 py-2 text-xs font-semibold text-fey-graphite hover:text-white rounded-full transition"
-                >
-                  Cancelar
-                </button>
-                <button
-                  type="submit"
-                  disabled={isClosingSubmitting}
-                  className="px-5 py-2 bg-white text-black font-bold text-xs rounded-full hover:bg-fey-pale transition shadow-fey-button disabled:opacity-50"
-                >
-                  {isClosingSubmitting ? 'Cerrando...' : 'Confirmar Cierre de Semana'}
-                </button>
-              </div>
-            </form>
           </div>
         </div>
       )}

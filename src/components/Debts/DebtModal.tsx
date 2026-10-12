@@ -103,30 +103,33 @@ export const DebtModal: React.FC<DebtModalProps> = ({
   ];
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md overflow-y-auto">
-      <div className="bg-[#131313] border border-[#2a2a2a] rounded-2xl w-full max-w-lg p-6 shadow-fey-card relative my-8 text-white">
+    <div className="fixed inset-0 z-50 flex items-start sm:items-center justify-center p-3 sm:p-4 bg-black/85 backdrop-blur-md overflow-y-auto">
+      <div className="bg-[#131313] border border-[#2a2a2a] rounded-2xl w-full max-w-lg p-5 sm:p-6 shadow-fey-card relative my-auto max-h-[92dvh] flex flex-col text-white animate-in fade-in duration-200">
         <button
           onClick={onClose}
-          className="absolute top-5 right-5 text-fey-graphite hover:text-white p-1 rounded-full transition"
+          className="absolute top-4 right-4 text-fey-graphite hover:text-white p-1 rounded-full transition z-10"
         >
           <X className="w-5 h-5" />
         </button>
 
-        <div className="flex items-center gap-2 mb-1 text-fey-ember text-xs uppercase tracking-wider font-bold">
-          <ShieldAlert className="w-4 h-4" />
-          Control de Pasivos
-        </div>
-        <h3 className="text-xl font-bold tracking-fey-heading text-white mb-4">
-          {debtToEdit ? 'Editar Deuda' : 'Registrar Nueva Deuda'}
-        </h3>
-
-        {error && (
-          <div className="mb-4 p-3 bg-red-500/10 border border-red-500/30 rounded-xl text-red-400 text-xs font-medium">
-            {error}
+        <div className="flex-shrink-0">
+          <div className="flex items-center gap-2 mb-1 text-fey-ember text-xs uppercase tracking-wider font-bold">
+            <ShieldAlert className="w-4 h-4" />
+            Control de Pasivos
           </div>
-        )}
+          <h3 className="text-xl font-bold tracking-fey-heading text-white mb-3">
+            {debtToEdit ? 'Editar Deuda' : 'Registrar Nueva Deuda'}
+          </h3>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+          {error && (
+            <div className="mb-3 p-3 bg-red-500/10 border border-red-500/30 rounded-xl text-red-400 text-xs font-medium">
+              {error}
+            </div>
+          )}
+        </div>
+
+        <form onSubmit={handleSubmit} className="flex flex-col flex-1 min-h-0">
+          <div className="flex-1 overflow-y-auto pr-1 space-y-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
               <label className="block text-[11px] font-semibold text-fey-graphite uppercase tracking-wider mb-1.5">
@@ -260,9 +263,10 @@ export const DebtModal: React.FC<DebtModalProps> = ({
               placeholder="Número de cliente, teléfono de contacto o condiciones..."
               className="w-full bg-[#0b0b0b] border border-[#2a2a2a] rounded-xl px-3.5 py-2 text-sm text-white placeholder-fey-smoke focus:outline-none focus:border-white transition"
             />
+            </div>
           </div>
 
-          <div className="flex items-center justify-end gap-3 pt-3 border-t border-[#222222]">
+          <div className="flex items-center justify-end gap-3 pt-3 border-t border-[#222222] flex-shrink-0">
             <button
               type="button"
               onClick={onClose}

@@ -1,6 +1,8 @@
 import { db } from '../db';
 import type { Account, AccountType, AmountPesos } from '../types';
 import { validateIntegerAmount } from '../utils/money';
+import { isSupabaseConfigured } from '../supabase/client';
+import { scheduleBackgroundSync } from './syncService';
 
 export const DEFAULT_USER_ID = 'local-user';
 
@@ -14,12 +16,26 @@ export async function getActiveAccounts(): Promise<Account[]> {
 }
 
 /**
- * Inicializa cuentas por defecto si la base de datos está vacía.
+ * Inicializa cuentas por defecto si la base de datos está vacía y no existen cuentas remotas.
  */
 export async function initializeDefaultAccountsIfNeeded(): Promise<Account[]> {
   const existingCount = await db.accounts.count();
   if (existingCount > 0) {
     return await getActiveAccounts();
+  }
+
+  // Si Supabase está configurado, intentar descargar cuentas existentes de la nube primero
+  if (isSupabaseConfigured() && typeof navigator !== 'undefined' && navigator.onLine) {
+    try {
+      const { pullRemoteChanges } = await import('./syncService');
+      await pullRemoteChanges();
+      const afterPullCount = await db.accounts.count();
+      if (afterPullCount > 0) {
+        return await getActiveAccounts();
+      }
+    } catch {
+      // Continuar con inicialización local si la red falla
+    }
   }
 
   const now = new Date().toISOString();
@@ -121,6 +137,8 @@ export async function createAccount(params: {
     syncStatus: 'pending'
   });
 
+  scheduleBackgroundSync();
+
   return account;
 }
 
@@ -155,6 +173,8 @@ export async function updateAccount(
     syncStatus: 'pending'
   });
 
+  scheduleBackgroundSync();
+
   return updated;
 }
 
@@ -183,4 +203,6 @@ export async function deleteAccount(id: string): Promise<void> {
     createdAt: now,
     syncStatus: 'pending'
   });
+
+  scheduleBackgroundSync();
 }

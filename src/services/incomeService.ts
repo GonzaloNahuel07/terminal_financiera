@@ -13,6 +13,7 @@ import {
   allocateVirtualReserve
 } from '../core/calculator';
 import { DEFAULT_USER_ID } from './accountService';
+import { scheduleBackgroundSync } from './syncService';
 
 export interface SuggestedAllocation {
   targetType: 'debt' | 'recurring_obligation' | 'savings_goal';
@@ -147,6 +148,10 @@ export async function applyConfirmedAllocations(
         syncStatus: 'pending'
       });
     }
+  }
+
+  if (appliedReserves.length > 0) {
+    scheduleBackgroundSync();
   }
 
   return appliedReserves;

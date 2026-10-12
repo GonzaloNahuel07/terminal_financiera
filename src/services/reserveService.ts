@@ -12,6 +12,7 @@ import {
   changeReserveStatus
 } from '../core/calculator';
 import { DEFAULT_USER_ID } from './accountService';
+import { scheduleBackgroundSync } from './syncService';
 
 export interface LiquidityMetrics {
   totalRealBalance: AmountPesos;
@@ -76,6 +77,8 @@ export async function allocateOrUpdateReserve(params: {
     syncStatus: 'pending'
   });
 
+  scheduleBackgroundSync();
+
   return result.reserve;
 }
 
@@ -101,6 +104,8 @@ export async function releaseReserve(reserveId: string): Promise<VirtualReserve>
     createdAt: new Date().toISOString(),
     syncStatus: 'pending'
   });
+
+  scheduleBackgroundSync();
 
   return updated;
 }

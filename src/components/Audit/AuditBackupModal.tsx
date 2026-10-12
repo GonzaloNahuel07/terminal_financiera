@@ -150,8 +150,8 @@ export const AuditBackupModal: React.FC<AuditBackupModalProps> = ({ isOpen, onCl
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/85 backdrop-blur-md overflow-y-auto">
-      <div className="bg-[#12141c] border border-[#242b38] rounded-2xl w-full max-w-2xl p-5 sm:p-6 shadow-fey-card relative my-6 text-white max-h-[90vh] flex flex-col">
+    <div className="fixed inset-0 z-50 flex items-start sm:items-center justify-center p-3 sm:p-4 bg-black/85 backdrop-blur-md overflow-y-auto">
+      <div className="bg-[#12141c] border border-[#242b38] rounded-2xl w-full max-w-2xl p-4 sm:p-6 shadow-fey-card relative my-auto sm:my-6 text-white max-h-[92dvh] flex flex-col">
         {/* Botón cerrar */}
         <button
           onClick={onClose}

@@ -8,6 +8,7 @@ import {
 } from '../core/calculator';
 import { allocateOrUpdateReserve } from './reserveService';
 import { DEFAULT_USER_ID } from './accountService';
+import { scheduleBackgroundSync } from './syncService';
 
 /**
  * Obtiene todas las metas de ahorro activas.
@@ -59,6 +60,8 @@ export async function initializeEmergencyFundIfNeeded(monthlyExpensesTarget = 15
     syncStatus: 'pending'
   });
 
+  scheduleBackgroundSync();
+
   return emergencyGoal;
 }
 
@@ -107,6 +110,8 @@ export async function createSavingsGoal(params: {
     syncStatus: 'pending'
   });
 
+  scheduleBackgroundSync();
+
   return goal;
 }
 
@@ -141,6 +146,8 @@ export async function updateSavingsGoal(
     syncStatus: 'pending'
   });
 
+  scheduleBackgroundSync();
+
   return updated;
 }
 
@@ -166,6 +173,8 @@ export async function deleteSavingsGoal(id: string): Promise<void> {
     createdAt: now,
     syncStatus: 'pending'
   });
+
+  scheduleBackgroundSync();
 }
 
 /**
@@ -230,6 +239,8 @@ export async function contributeToSavingsGoal(params: {
     syncStatus: 'pending'
   });
 
+  scheduleBackgroundSync();
+
   return updated;
 }
 
@@ -282,6 +293,8 @@ export async function withdrawFromSavingsGoal(params: {
       });
     }
   }
+
+  scheduleBackgroundSync();
 
   return updated;
 }

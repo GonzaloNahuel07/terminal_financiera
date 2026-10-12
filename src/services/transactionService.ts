@@ -3,6 +3,7 @@ import type { Transaction, TransactionType, AmountPesos } from '../types';
 import { validateIntegerAmount } from '../utils/money';
 import { calculateAccountBalance } from '../core/calculator';
 import { DEFAULT_USER_ID } from './accountService';
+import { scheduleBackgroundSync } from './syncService';
 
 /**
  * Obtiene transacciones no eliminadas ordenadas por fecha descendente.
@@ -107,6 +108,8 @@ export async function createTransaction(params: {
     syncStatus: 'pending'
   });
 
+  scheduleBackgroundSync();
+
   return transaction;
 }
 
@@ -155,6 +158,8 @@ export async function updateTransaction(
     syncStatus: 'pending'
   });
 
+  scheduleBackgroundSync();
+
   return updated;
 }
 
@@ -189,4 +194,6 @@ export async function voidTransaction(id: string): Promise<void> {
     createdAt: now,
     syncStatus: 'pending'
   });
+
+  scheduleBackgroundSync();
 }

@@ -3,6 +3,7 @@ import type { WeeklyPlan, Debt, RecurringObligation, AmountPesos } from '../type
 import { validateIntegerAmount } from '../utils/money';
 import { DEFAULT_USER_ID } from './accountService';
 import { analyzeWeeklyPlan, type WeeklyAnalysis } from '../core/weeklyPlan';
+import { scheduleBackgroundSync } from './syncService';
 
 /**
  * Obtiene el rango de fechas (YYYY-MM-DD) del lunes y domingo de la semana actual.
@@ -154,6 +155,8 @@ export async function createWeeklyPlan(params: {
     syncStatus: 'pending'
   });
 
+  scheduleBackgroundSync();
+
   return plan;
 }
 
@@ -193,6 +196,8 @@ export async function updateWeeklyPlan(
     createdAt: now,
     syncStatus: 'pending'
   });
+
+  scheduleBackgroundSync();
 
   return updated;
 }
@@ -263,6 +268,8 @@ export async function closeWeeklyPlan(planId: string, closingNotes?: string): Pr
     createdAt: now,
     syncStatus: 'pending'
   });
+
+  scheduleBackgroundSync();
 
   return closed;
 }

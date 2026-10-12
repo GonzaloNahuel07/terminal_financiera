@@ -404,9 +404,9 @@ export const SavingsList: React.FC<SavingsListProps> = ({
 
       {/* MODAL DE APORTE / RETIRO RÁPIDO */}
       {actionType && selectedGoal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-          <div className="bg-[#141414] border border-[#282828] w-full max-w-sm rounded-2xl p-6 shadow-fey-modal space-y-4 animate-in fade-in duration-200">
-            <div>
+        <div className="fixed inset-0 z-50 flex items-start sm:items-center justify-center p-3 sm:p-4 bg-black/80 backdrop-blur-sm overflow-y-auto">
+          <div className="bg-[#141414] border border-[#282828] w-full max-w-sm rounded-2xl p-5 sm:p-6 shadow-fey-modal relative my-auto max-h-[92dvh] flex flex-col text-white animate-in fade-in duration-200">
+            <div className="flex-shrink-0 mb-2">
               <span className="text-[10px] font-bold text-fey-graphite uppercase tracking-wider block">
                 {actionType === 'contribute' ? 'Aporte a Meta' : 'Retiro de Meta'}
               </span>
@@ -421,53 +421,55 @@ export const SavingsList: React.FC<SavingsListProps> = ({
             </div>
 
             {actionError && (
-              <div className="p-2.5 bg-[#241414] border border-[#441a1a] rounded-xl text-xs text-red-300">
+              <div className="p-2.5 bg-[#241414] border border-[#441a1a] rounded-xl text-xs text-red-300 mb-2 flex-shrink-0">
                 {actionError}
               </div>
             )}
 
-            <form onSubmit={handleExecuteAction} className="space-y-4">
-              <div>
-                <label className="block text-xs font-semibold text-fey-mist uppercase tracking-wider mb-1.5">
-                  Importe en Pesos (ARS)
-                </label>
-                <div className="relative">
-                  <span className="absolute left-3.5 top-2.5 text-fey-graphite font-mono">$</span>
-                  <input
-                    type="number"
-                    min="1"
-                    step="1"
-                    required
-                    autoFocus
-                    value={actionAmount || ''}
-                    onChange={(e) => setActionAmount(Math.round(Number(e.target.value)))}
-                    placeholder="0"
-                    className="w-full bg-[#0b0b0b] border border-[#282828] rounded-xl pl-8 pr-3.5 py-2.5 text-sm font-mono text-white placeholder-fey-graphite focus:outline-none focus:border-fey-growth transition"
-                  />
+            <form onSubmit={handleExecuteAction} className="flex flex-col flex-1 min-h-0">
+              <div className="flex-1 overflow-y-auto pr-1 space-y-4">
+                <div>
+                  <label className="block text-xs font-semibold text-fey-mist uppercase tracking-wider mb-1.5">
+                    Importe en Pesos (ARS)
+                  </label>
+                  <div className="relative">
+                    <span className="absolute left-3.5 top-2.5 text-fey-graphite font-mono">$</span>
+                    <input
+                      type="number"
+                      min="1"
+                      step="1"
+                      required
+                      autoFocus
+                      value={actionAmount || ''}
+                      onChange={(e) => setActionAmount(Math.round(Number(e.target.value)))}
+                      placeholder="0"
+                      className="w-full bg-[#0b0b0b] border border-[#282828] rounded-xl pl-8 pr-3.5 py-2.5 text-sm font-mono text-white placeholder-fey-graphite focus:outline-none focus:border-fey-growth transition"
+                    />
+                  </div>
                 </div>
+
+                {/* Botón rápido del monto sugerido */}
+                {actionType === 'contribute' && freeBalance > 0 && (
+                  <div className="flex flex-wrap gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setActionAmount(Math.min(freeBalance, selectedGoal.targetAmount - selectedGoal.currentAmount))}
+                      className="px-2.5 py-1 text-[11px] bg-[#1a1a1a] hover:bg-[#242424] text-fey-mist rounded-lg transition"
+                    >
+                      Restante para meta
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setActionAmount(freeBalance)}
+                      className="px-2.5 py-1 text-[11px] bg-[#1a1a1a] hover:bg-[#242424] text-fey-mist rounded-lg transition"
+                    >
+                      Todo el libre ({formatPesos(freeBalance)})
+                    </button>
+                  </div>
+                )}
               </div>
 
-              {/* Botón rápido del monto sugerido */}
-              {actionType === 'contribute' && freeBalance > 0 && (
-                <div className="flex gap-2">
-                  <button
-                    type="button"
-                    onClick={() => setActionAmount(Math.min(freeBalance, selectedGoal.targetAmount - selectedGoal.currentAmount))}
-                    className="px-2.5 py-1 text-[11px] bg-[#1a1a1a] hover:bg-[#242424] text-fey-mist rounded-lg transition"
-                  >
-                    Restante para meta
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setActionAmount(freeBalance)}
-                    className="px-2.5 py-1 text-[11px] bg-[#1a1a1a] hover:bg-[#242424] text-fey-mist rounded-lg transition"
-                  >
-                    Todo el libre ({formatPesos(freeBalance)})
-                  </button>
-                </div>
-              )}
-
-              <div className="flex items-center justify-end gap-2 pt-2 border-t border-[#222222]">
+              <div className="flex items-center justify-end gap-2 pt-3 border-t border-[#222222] flex-shrink-0">
                 <button
                   type="button"
                   onClick={handleCloseAction}

@@ -60,29 +60,32 @@ export const DebtPaymentModal: React.FC<DebtPaymentModalProps> = ({
   const remainingAfter = Math.max(0, debt.remainingAmount - (Math.round(paymentAmount) || 0));
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md">
-      <div className="bg-[#131313] border border-[#2a2a2a] rounded-2xl w-full max-w-md p-6 shadow-fey-card relative text-white">
+    <div className="fixed inset-0 z-50 flex items-start sm:items-center justify-center p-3 sm:p-4 bg-black/85 backdrop-blur-md overflow-y-auto">
+      <div className="bg-[#131313] border border-[#2a2a2a] rounded-2xl w-full max-w-md p-5 sm:p-6 shadow-fey-card relative my-auto max-h-[92dvh] flex flex-col text-white animate-in fade-in duration-200">
         <button
           onClick={onClose}
-          className="absolute top-5 right-5 text-fey-graphite hover:text-white p-1 rounded-full transition"
+          className="absolute top-4 right-4 text-fey-graphite hover:text-white p-1 rounded-full transition z-10"
         >
           <X className="w-5 h-5" />
         </button>
 
-        <h3 className="text-lg font-bold tracking-fey-heading text-white mb-1">
-          Confirmar Pago de Deuda
-        </h3>
-        <p className="text-xs text-fey-graphite mb-4">
-          {debt.name} • {debt.creditor}
-        </p>
+        <div className="flex-shrink-0">
+          <h3 className="text-lg font-bold tracking-fey-heading text-white mb-1">
+            Confirmar Pago de Deuda
+          </h3>
+          <p className="text-xs text-fey-graphite mb-3">
+            {debt.name} • {debt.creditor}
+          </p>
 
-        {error && (
-          <div className="mb-4 p-3 bg-red-500/10 border border-red-500/30 rounded-xl text-red-400 text-xs font-medium">
-            {error}
-          </div>
-        )}
+          {error && (
+            <div className="mb-3 p-3 bg-red-500/10 border border-red-500/30 rounded-xl text-red-400 text-xs font-medium">
+              {error}
+            </div>
+          )}
+        </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="flex flex-col flex-1 min-h-0">
+          <div className="flex-1 overflow-y-auto pr-1 space-y-4">
           {/* Opciones Rápidas de Pago */}
           <div className="grid grid-cols-2 gap-2">
             <button
@@ -178,9 +181,10 @@ export const DebtPaymentModal: React.FC<DebtPaymentModalProps> = ({
               placeholder="Número de comprobante, transferencia..."
               className="w-full bg-[#0b0b0b] border border-[#2a2a2a] rounded-xl px-3.5 py-2 text-xs text-white placeholder-fey-smoke focus:outline-none focus:border-white transition"
             />
+            </div>
           </div>
 
-          <div className="flex items-center justify-end gap-3 pt-3 border-t border-[#222222]">
+          <div className="flex items-center justify-end gap-3 pt-3 border-t border-[#222222] flex-shrink-0">
             <button
               type="button"
               onClick={onClose}

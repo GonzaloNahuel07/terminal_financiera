@@ -43,7 +43,7 @@ export const SyncModal: React.FC<SyncModalProps> = ({
   } | null>(null);
 
   // Formulario de credenciales
-  const [showConfig, setShowConfig] = useState(false);
+  const [showConfig, setShowConfig] = useState(!isSupabaseConfigured());
   const [supabaseUrl, setSupabaseUrl] = useState(getSupabaseUrl());
   const [supabaseAnonKey, setSupabaseAnonKey] = useState(getSupabaseAnonKey());
   const [configSavedMessage, setConfigSavedMessage] = useState<string | null>(null);
@@ -107,16 +107,16 @@ export const SyncModal: React.FC<SyncModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-      <div className="bg-[#141414] border border-[#282828] w-full max-w-xl rounded-2xl p-6 shadow-fey-modal space-y-5 animate-in fade-in duration-200 max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 z-50 flex items-start sm:items-center justify-center p-3 sm:p-4 bg-black/80 backdrop-blur-sm overflow-y-auto">
+      <div className="bg-[#141414] border border-[#282828] w-full max-w-xl rounded-2xl p-4 sm:p-6 shadow-fey-modal space-y-4 sm:space-y-5 animate-in fade-in duration-200 max-h-[92dvh] flex flex-col my-auto">
         {/* Header */}
-        <div className="flex items-center justify-between border-b border-[#222222] pb-3">
+        <div className="flex items-center justify-between border-b border-[#222222] pb-3 shrink-0">
           <div className="flex items-center gap-2.5">
             <div className="w-9 h-9 rounded-full bg-[#1b2535] border border-[#2c3d59] flex items-center justify-center text-fey-signal">
               <Database className="w-5 h-5" />
             </div>
             <div>
-              <h3 className="text-lg font-bold tracking-fey-heading text-white">
+              <h3 className="text-base sm:text-lg font-bold tracking-fey-heading text-white">
                 Sincronización y Estado Offline
               </h3>
               <p className="text-xs text-fey-graphite">
@@ -131,6 +131,9 @@ export const SyncModal: React.FC<SyncModalProps> = ({
             <X className="w-5 h-5" />
           </button>
         </div>
+
+        {/* Scrollable Body */}
+        <div className="flex-1 overflow-y-auto space-y-4 pr-1">
 
         {/* Feedback Alert */}
         {syncFeedback && (
@@ -336,6 +339,7 @@ export const SyncModal: React.FC<SyncModalProps> = ({
               </div>
             </form>
           )}
+        </div>
         </div>
       </div>
     </div>

@@ -5,6 +5,7 @@ import { evaluateDebtStatus, applyDebtPayment } from '../core/debts';
 import { createTransaction } from './transactionService';
 import { changeReserveStatus } from '../core/calculator';
 import { DEFAULT_USER_ID } from './accountService';
+import { scheduleBackgroundSync } from './syncService';
 
 /**
  * Obtiene todas las deudas activas no eliminadas.
@@ -88,6 +89,8 @@ export async function createDebt(params: {
     syncStatus: 'pending'
   });
 
+  scheduleBackgroundSync();
+
   return newDebt;
 }
 
@@ -122,6 +125,8 @@ export async function updateDebt(
     syncStatus: 'pending'
   });
 
+  scheduleBackgroundSync();
+
   return updated;
 }
 
@@ -147,6 +152,8 @@ export async function deleteDebt(id: string): Promise<void> {
     createdAt: now,
     syncStatus: 'pending'
   });
+
+  scheduleBackgroundSync();
 }
 
 /**
@@ -218,6 +225,8 @@ export async function recordDebtPayment(params: {
     createdAt: new Date().toISOString(),
     syncStatus: 'pending'
   });
+
+  scheduleBackgroundSync();
 
   return { updatedDebt, paymentAmount: actualPaid };
 }

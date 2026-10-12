@@ -115,8 +115,8 @@ export const TransactionModal: React.FC<TransactionModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/80 backdrop-blur-sm overflow-y-auto">
-      <div className="bg-[#141414] border border-[#282828] rounded-2xl w-full max-w-lg p-5 sm:p-6 shadow-fey-modal relative my-auto max-h-[92vh] overflow-y-auto animate-in fade-in duration-200">
+    <div className="fixed inset-0 z-50 flex items-start sm:items-center justify-center p-3 sm:p-4 bg-black/80 backdrop-blur-sm overflow-y-auto">
+      <div className="bg-[#141414] border border-[#282828] rounded-2xl w-full max-w-lg p-5 sm:p-6 shadow-fey-modal relative my-auto max-h-[92dvh] overflow-y-auto animate-in fade-in duration-200">
         <button
           onClick={onClose}
           className="absolute top-4 right-4 text-fey-graphite hover:text-white p-1 rounded-full hover:bg-[#222222] transition"

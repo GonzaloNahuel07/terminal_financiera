@@ -132,34 +132,37 @@ export const AllocateReserveModal: React.FC<AllocateReserveModalProps> = ({
   const freeBalanceAfter = Math.max(0, maxAvailableForThis - (Math.round(amount) || 0));
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md">
-      <div className="bg-[#131313] border border-[#2a2a2a] rounded-2xl w-full max-w-md p-6 shadow-fey-card text-white relative">
+    <div className="fixed inset-0 z-50 flex items-start sm:items-center justify-center p-3 sm:p-4 bg-black/85 backdrop-blur-md overflow-y-auto">
+      <div className="bg-[#131313] border border-[#2a2a2a] rounded-2xl w-full max-w-md p-5 sm:p-6 shadow-fey-card text-white relative my-auto max-h-[92dvh] flex flex-col animate-in fade-in duration-200">
         <button
           onClick={onClose}
-          className="absolute top-5 right-5 text-fey-graphite hover:text-white p-1 rounded-full transition"
+          className="absolute top-4 right-4 text-fey-graphite hover:text-white p-1 rounded-full transition z-10"
         >
           <X className="w-5 h-5" />
         </button>
 
-        <div className="flex items-center gap-2 mb-1 text-fey-growth text-xs uppercase tracking-wider font-bold">
-          <ShieldAlert className="w-4 h-4" />
-          Asignación Virtual
-        </div>
-        <h3 className="text-xl font-bold tracking-fey-heading text-white mb-1">
-          {reserveToEdit ? 'Ajustar Reserva Virtual' : 'Apartar Dinero (Reserva)'}
-        </h3>
-        <p className="text-xs text-fey-graphite mb-4">
-          Compromiso virtual • No mueve fondos bancarios reales
-        </p>
-
-        {error && (
-          <div className="mb-4 p-3 bg-red-500/10 border border-red-500/30 rounded-xl text-red-400 text-xs font-medium flex items-center gap-2">
-            <AlertCircle className="w-4 h-4 flex-shrink-0" />
-            <span>{error}</span>
+        <div className="flex-shrink-0">
+          <div className="flex items-center gap-2 mb-1 text-fey-growth text-xs uppercase tracking-wider font-bold">
+            <ShieldAlert className="w-4 h-4" />
+            Asignación Virtual
           </div>
-        )}
+          <h3 className="text-xl font-bold tracking-fey-heading text-white mb-1">
+            {reserveToEdit ? 'Ajustar Reserva Virtual' : 'Apartar Dinero (Reserva)'}
+          </h3>
+          <p className="text-xs text-fey-graphite mb-3">
+            Compromiso virtual • No mueve fondos bancarios reales
+          </p>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+          {error && (
+            <div className="mb-3 p-3 bg-red-500/10 border border-red-500/30 rounded-xl text-red-400 text-xs font-medium flex items-center gap-2">
+              <AlertCircle className="w-4 h-4 flex-shrink-0" />
+              <span>{error}</span>
+            </div>
+          )}
+        </div>
+
+        <form onSubmit={handleSubmit} className="flex flex-col flex-1 min-h-0">
+          <div className="flex-1 overflow-y-auto pr-1 space-y-4">
           {/* Selector de Obligación */}
           {!reserveToEdit && (
             <div>
@@ -241,9 +244,10 @@ export const AllocateReserveModal: React.FC<AllocateReserveModalProps> = ({
               </span>
               <span className="font-mono text-fey-growth">{formatPesos(freeBalanceAfter)}</span>
             </div>
+            </div>
           </div>
 
-          <div className="flex items-center justify-end gap-3 pt-3 border-t border-[#222222]">
+          <div className="flex items-center justify-end gap-3 pt-3 border-t border-[#222222] flex-shrink-0">
             <button
               type="button"
               onClick={onClose}

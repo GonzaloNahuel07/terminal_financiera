@@ -75,30 +75,33 @@ export const RecurringModal: React.FC<RecurringModalProps> = ({
   ];
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md">
-      <div className="bg-[#131313] border border-[#2a2a2a] rounded-2xl w-full max-w-md p-6 shadow-fey-card relative text-white">
+    <div className="fixed inset-0 z-50 flex items-start sm:items-center justify-center p-3 sm:p-4 bg-black/85 backdrop-blur-md overflow-y-auto">
+      <div className="bg-[#131313] border border-[#2a2a2a] rounded-2xl w-full max-w-md p-5 sm:p-6 shadow-fey-card relative my-auto max-h-[92dvh] flex flex-col text-white animate-in fade-in duration-200">
         <button
           onClick={onClose}
-          className="absolute top-5 right-5 text-fey-graphite hover:text-white p-1 rounded-full transition"
+          className="absolute top-4 right-4 text-fey-graphite hover:text-white p-1 rounded-full transition z-10"
         >
           <X className="w-5 h-5" />
         </button>
 
-        <div className="flex items-center gap-2 mb-1 text-fey-signal text-xs uppercase tracking-wider font-bold">
-          <RefreshCw className="w-4 h-4" />
-          Gastos Fijos y Periódicos
-        </div>
-        <h3 className="text-xl font-bold tracking-fey-heading text-white mb-4">
-          {templateToEdit ? 'Editar Plantilla Recurrente' : 'Nueva Plantilla Periódica'}
-        </h3>
-
-        {error && (
-          <div className="mb-4 p-3 bg-red-500/10 border border-red-500/30 rounded-xl text-red-400 text-xs font-medium">
-            {error}
+        <div className="flex-shrink-0">
+          <div className="flex items-center gap-2 mb-1 text-fey-signal text-xs uppercase tracking-wider font-bold">
+            <RefreshCw className="w-4 h-4" />
+            Gastos Fijos y Periódicos
           </div>
-        )}
+          <h3 className="text-xl font-bold tracking-fey-heading text-white mb-3">
+            {templateToEdit ? 'Editar Plantilla Recurrente' : 'Nueva Plantilla Periódica'}
+          </h3>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+          {error && (
+            <div className="mb-3 p-3 bg-red-500/10 border border-red-500/30 rounded-xl text-red-400 text-xs font-medium">
+              {error}
+            </div>
+          )}
+        </div>
+
+        <form onSubmit={handleSubmit} className="flex flex-col flex-1 min-h-0">
+          <div className="flex-1 overflow-y-auto pr-1 space-y-4">
           <div>
             <label className="block text-[11px] font-semibold text-fey-graphite uppercase tracking-wider mb-1.5">
               Concepto / Nombre del Gasto
@@ -184,10 +187,11 @@ export const RecurringModal: React.FC<RecurringModalProps> = ({
                   </option>
                 ))}
               </select>
+              </div>
             </div>
           </div>
 
-          <div className="flex items-center justify-end gap-3 pt-3 border-t border-[#222222]">
+          <div className="flex items-center justify-end gap-3 pt-3 border-t border-[#222222] flex-shrink-0">
             <button
               type="button"
               onClick={onClose}

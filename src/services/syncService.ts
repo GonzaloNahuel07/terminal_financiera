@@ -157,11 +157,35 @@ export async function pullRemoteChanges(): Promise<{ pulled: number }> {
     }
   }
 
+  // Si se descargaron cambios, sincronizar saldos calculados de todas las cuentas
+  if (totalPulled > 0) {
+    try {
+      const { syncAccountCurrentBalance } = await import('./transactionService');
+      const allAccounts = await db.accounts.toArray();
+      for (const acc of allAccounts) {
+        await syncAccountCurrentBalance(acc.id);
+      }
+    } catch {
+      // Ignorar fallas menores de recálculo
+    }
+  }
+
   if (typeof window !== 'undefined') {
     localStorage.setItem(STORAGE_KEY_LAST_SYNC, new Date().toISOString());
   }
 
   return { pulled: totalPulled };
+}
+
+/**
+ * Dispara una sincronización en segundo plano de manera no bloqueante tras mutaciones locales.
+ */
+export function scheduleBackgroundSync(): void {
+  if (typeof window !== 'undefined' && navigator.onLine && isSupabaseConfigured()) {
+    setTimeout(() => {
+      triggerFullSync().catch(() => {});
+    }, 150);
+  }
 }
 
 /**

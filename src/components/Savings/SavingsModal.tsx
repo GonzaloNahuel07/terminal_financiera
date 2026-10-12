@@ -83,10 +83,10 @@ export const SavingsModal: React.FC<SavingsModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-      <div className="bg-[#141414] border border-[#282828] w-full max-w-lg rounded-2xl p-6 shadow-fey-modal space-y-5 animate-in fade-in duration-200">
+    <div className="fixed inset-0 z-50 flex items-start sm:items-center justify-center p-3 sm:p-4 bg-black/80 backdrop-blur-sm overflow-y-auto">
+      <div className="bg-[#141414] border border-[#282828] w-full max-w-lg rounded-2xl p-5 sm:p-6 shadow-fey-modal relative my-auto max-h-[92dvh] flex flex-col text-white animate-in fade-in duration-200">
         {/* Modal Header */}
-        <div className="flex items-center justify-between border-b border-[#222222] pb-3">
+        <div className="flex items-center justify-between border-b border-[#222222] pb-3 mb-3 flex-shrink-0">
           <div className="flex items-center gap-2.5">
             <div className="w-9 h-9 rounded-full bg-[#1b2a22] border border-[#2b4c38] flex items-center justify-center text-fey-growth">
               {isEmergencyFund ? <ShieldCheck className="w-5 h-5" /> : <Target className="w-5 h-5" />}
@@ -109,12 +109,13 @@ export const SavingsModal: React.FC<SavingsModalProps> = ({
         </div>
 
         {error && (
-          <div className="p-3 bg-[#241414] border border-[#441a1a] rounded-xl text-xs text-red-300">
+          <div className="p-3 bg-[#241414] border border-[#441a1a] rounded-xl text-xs text-red-300 mb-3 flex-shrink-0">
             {error}
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="flex flex-col flex-1 min-h-0">
+          <div className="flex-1 overflow-y-auto pr-1 space-y-4">
           {/* Nombre */}
           <div>
             <label className="block text-xs font-semibold text-fey-mist uppercase tracking-wider mb-1.5">
@@ -215,9 +216,10 @@ export const SavingsModal: React.FC<SavingsModalProps> = ({
               </div>
             </label>
           )}
+          </div>
 
           {/* Actions */}
-          <div className="flex items-center justify-end gap-2.5 pt-2 border-t border-[#222222]">
+          <div className="flex items-center justify-end gap-2.5 pt-3 border-t border-[#222222] flex-shrink-0">
             <button
               type="button"
               onClick={onClose}
